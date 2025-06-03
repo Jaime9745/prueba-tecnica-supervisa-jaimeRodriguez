@@ -1,6 +1,6 @@
 import * as React from "react";
 import { format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
+import { Calendar as CalendarIcon, X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -26,13 +26,18 @@ export function DatePicker({
   disabled = false,
   className,
 }: DatePickerProps) {
+  const handleClear = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onDateChange(undefined);
+  };
+
   return (
     <Popover>
       <PopoverTrigger asChild>
         <Button
           variant={"outline"}
           className={cn(
-            "w-full justify-start text-left font-normal",
+            "w-full justify-start text-left font-normal relative",
             !date && "text-muted-foreground",
             className
           )}
@@ -40,6 +45,16 @@ export function DatePicker({
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
           {date ? format(date, "dd/MM/yyyy") : <span>{placeholder}</span>}
+          {date && (
+            <button
+              type="button"
+              onClick={handleClear}
+              className="ml-auto mr-0 h-4 w-4 text-muted-foreground hover:text-foreground transition-colors"
+              aria-label="Limpiar fecha"
+            >
+              <X className="h-3 w-3" />
+            </button>
+          )}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0">

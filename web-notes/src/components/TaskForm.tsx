@@ -85,15 +85,12 @@ export default function TaskForm({
     } else if (formData.title.length > 150) {
       newErrors.title = "El título debe tener 150 caracteres o menos";
     }
-
     if (formData.description.length > 1000) {
       newErrors.description =
         "La descripción debe tener 1000 caracteres o menos";
     }
 
-    if (!selectedDate) {
-      newErrors.due_date = "La fecha de vencimiento es obligatoria";
-    }
+    // Removed due_date validation since it's now optional
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -194,7 +191,7 @@ export default function TaskForm({
               htmlFor="due_date"
               className="block text-sm font-medium mb-1"
             >
-              Fecha de Vencimiento *
+              Fecha de Vencimiento
             </label>
             <DatePicker
               date={selectedDate}

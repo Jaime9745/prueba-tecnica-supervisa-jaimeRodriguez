@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Edit, Trash2, Calendar } from "lucide-react";
 import type { Task } from "@/types/task";
 
@@ -54,15 +54,13 @@ export default function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
     if (priority === "high") return "Alta";
     return priority.charAt(0).toUpperCase() + priority.slice(1);
   };
-
   return (
     <Card className="h-full flex flex-col">
-      {" "}
-      <CardHeader className="pb-1">
-        <div className="flex items-start justify-between gap-2">
-          <CardTitle className="text-lg font-semibold line-clamp-2">
+      <CardContent className="flex-1 flex flex-col">
+        <div className="flex items-start justify-between gap-2 mb-2">
+          <h3 className="text-lg font-semibold line-clamp-2 flex-1">
             {task.title}
-          </CardTitle>
+          </h3>
           <div className="flex gap-1 shrink-0">
             <Button
               variant="ghost"
@@ -82,8 +80,7 @@ export default function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
             </Button>
           </div>
         </div>
-      </CardHeader>
-      <CardContent className="flex-1 flex flex-col pt-2">
+
         <div className="flex-1">
           {task.description && (
             <p className="text-sm text-gray-600 mb-3">
@@ -91,10 +88,14 @@ export default function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
             </p>
           )}
 
-          <div className="text-sm text-gray-500 mb-3 flex items-center">
-            <Calendar className="h-3.5 w-3.5 mr-1 opacity-70" /> {task.due_date}
-          </div>
-        </div>{" "}
+          {task.due_date && (
+            <div className="text-sm text-gray-500 mb-3 flex items-center">
+              <Calendar className="h-3.5 w-3.5 mr-1 opacity-70" />
+              {task.due_date}
+            </div>
+          )}
+        </div>
+
         <div className="flex flex-wrap gap-2 mt-auto">
           <Badge className={getPriorityColor(task.priority)}>
             {formatPriority(task.priority)}

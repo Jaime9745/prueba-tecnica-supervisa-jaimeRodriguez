@@ -203,10 +203,10 @@ export default function TaskManager() {
             Nueva Tarea
           </Button>
         </CardHeader>
-      </Card>
+      </Card>{" "}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Filters Sidebar */}{" "}
-        <div className="lg:col-span-1">
+        {/* Filters Sidebar */}
+        <div className="lg:col-span-1 order-1 lg:order-1">
           <TaskFilters
             selectedStatuses={selectedStatuses}
             selectedPriorities={selectedPriorities}
@@ -215,16 +215,16 @@ export default function TaskManager() {
             onClearFilters={handleClearFilters}
           />
 
-          {/* Task Statistics */}
-          <div className="mt-6">
+          {/* Task Statistics - Hidden on mobile, shown in sidebar on lg+ */}
+          <div className="mt-6 hidden lg:block">
             <TaskStats tasks={tasks} />
           </div>
         </div>
+
         {/* Tasks Grid/List */}
-        <div className="lg:col-span-3">
+        <div className="lg:col-span-3 order-2 lg:order-2">
           {filteredTasks.length === 0 ? (
             <div className="text-center py-12">
-              {" "}
               <div className="text-gray-500 text-lg mb-2">
                 {tasks.length === 0
                   ? "No hay tareas todavía"
@@ -248,6 +248,11 @@ export default function TaskManager() {
               ))}
             </div>
           )}
+        </div>
+
+        {/* Task Statistics - Shown at the end on mobile */}
+        <div className="lg:hidden order-3">
+          <TaskStats tasks={tasks} />
         </div>
       </div>
       {/* Task Form Modal */}
