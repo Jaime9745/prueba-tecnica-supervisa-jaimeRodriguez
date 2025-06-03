@@ -104,7 +104,7 @@ export default function TaskManager() {
     if (!editingTask) return;
 
     try {
-      const response = await fetch(`/api/tasks/${editingTask.id}`, {
+      const response = await fetch(`/api/tasks/${editingTask.task_id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -125,7 +125,7 @@ export default function TaskManager() {
     }
   };
   const handleDeleteTask = async (taskId: string) => {
-    const task = tasks.find((t) => t.id === taskId);
+    const task = tasks.find((t) => t.task_id === taskId);
     if (!task) return;
 
     setDeleteDialog({
@@ -170,13 +170,7 @@ export default function TaskManager() {
     setSelectedPriorities([]);
   };
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-lg text-gray-600 font-bold">
-          Cargando tareas...
-        </div>
-      </div>
-    );
+    return null;
   }
 
   if (error) {
@@ -240,7 +234,7 @@ export default function TaskManager() {
             <div className="space-y-4">
               {filteredTasks.map((task) => (
                 <TaskCard
-                  key={task.id}
+                  key={task.task_id}
                   task={task}
                   onEdit={handleEditTask}
                   onDelete={handleDeleteTask}

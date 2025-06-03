@@ -33,7 +33,6 @@ export class TaskStorage {
       return [];
     }
   }
-
   static async saveTask(taskData: CreateTaskData): Promise<Task> {
     const tasks = await this.getAllTasks();
 
@@ -46,23 +45,22 @@ export class TaskStorage {
     }
 
     const newTask: Task = {
-      id: Date.now().toString(),
+      task_id: Date.now().toString(),
       ...taskData,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+      origin_framework: "astro",
+      user_email: "2220211014@estudiantesunibague.edu.co",
     };
 
     tasks.push(newTask);
     await this.saveTasks(tasks);
     return newTask;
   }
-
   static async updateTask(
-    id: string,
+    task_id: string,
     updateData: Partial<CreateTaskData>
   ): Promise<Task | null> {
     const tasks = await this.getAllTasks();
-    const taskIndex = tasks.findIndex((task) => task.id === id);
+    const taskIndex = tasks.findIndex((task) => task.task_id === task_id);
 
     if (taskIndex === -1) {
       return null;
@@ -73,7 +71,7 @@ export class TaskStorage {
       const existingTask = tasks.find(
         (task) =>
           task.title.toLowerCase() === updateData.title!.toLowerCase() &&
-          task.id !== id
+          task.task_id !== task_id
       );
       if (existingTask) {
         throw new Error("A task with this title already exists");
@@ -83,16 +81,14 @@ export class TaskStorage {
     tasks[taskIndex] = {
       ...tasks[taskIndex],
       ...updateData,
-      updated_at: new Date().toISOString(),
     };
 
     await this.saveTasks(tasks);
     return tasks[taskIndex];
   }
-
-  static async deleteTask(id: string): Promise<boolean> {
+  static async deleteTask(task_id: string): Promise<boolean> {
     const tasks = await this.getAllTasks();
-    const filteredTasks = tasks.filter((task) => task.id !== id);
+    const filteredTasks = tasks.filter((task) => task.task_id !== task_id);
 
     if (filteredTasks.length === tasks.length) {
       return false; // Task not found
@@ -102,9 +98,9 @@ export class TaskStorage {
     return true;
   }
 
-  static async getTaskById(id: string): Promise<Task | null> {
+  static async getTaskById(task_id: string): Promise<Task | null> {
     const tasks = await this.getAllTasks();
-    return tasks.find((task) => task.id === id) || null;
+    return tasks.find((task) => task.task_id === task_id) || null;
   }
 
   private static async saveTasks(tasks: Task[]): Promise<void> {

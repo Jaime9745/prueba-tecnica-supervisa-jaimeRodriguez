@@ -2,14 +2,14 @@ export type Priority = "high" | "medium" | "low";
 export type Status = "pending" | "in_progress" | "completed";
 
 export interface Task {
-  id: string;
+  task_id: string;
   title: string;
   description?: string;
   due_date: string; // DD/MM/YYYY format
   priority: Priority;
   status: Status;
-  created_at: string;
-  updated_at: string;
+  origin_framework: string;
+  user_email: string;
 }
 
 export interface CreateTaskData {
