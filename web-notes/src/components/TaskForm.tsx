@@ -131,9 +131,12 @@ export default function TaskForm({
           <DialogTitle>
             {isEdit ? "Editar Tarea" : "Crear Nueva Tarea"}
           </DialogTitle>
-        </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
+        </DialogHeader>{" "}
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-4 w-full max-w-full overflow-hidden"
+        >
+          <div className="w-full">
             {" "}
             <label htmlFor="title" className="block text-sm font-medium mb-1">
               Título *
@@ -150,8 +153,8 @@ export default function TaskForm({
             {errors.title && (
               <p className="text-red-500 text-sm mt-1">{errors.title}</p>
             )}
-          </div>
-          <div>
+          </div>{" "}
+          <div className="w-full">
             {" "}
             <label
               htmlFor="description"
@@ -159,21 +162,33 @@ export default function TaskForm({
             >
               Descripción
             </label>
-            <Textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
-              placeholder="Ingresa la descripción de la tarea (opcional)"
-              className={errors.description ? "border-red-500" : ""}
-              rows={3}
-            />
+            <div className="w-full">
+              <Textarea
+                id="description"
+                value={formData.description}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
+                placeholder="Ingresa la descripción de la tarea (opcional)"
+                className={errors.description ? "border-red-500" : ""}
+              />
+              <div className="flex justify-end mt-1">
+                <span
+                  className={`text-xs ${
+                    formData.description.length > 1000
+                      ? "text-red-500"
+                      : "text-gray-500"
+                  }`}
+                >
+                  {formData.description.length}/1000
+                </span>
+              </div>
+            </div>
             {errors.description && (
               <p className="text-red-500 text-sm mt-1">{errors.description}</p>
             )}
           </div>{" "}
-          <div>
+          <div className="w-full">
             {" "}
             <label
               htmlFor="due_date"
@@ -185,27 +200,27 @@ export default function TaskForm({
               date={selectedDate}
               onDateChange={setSelectedDate}
               placeholder="Seleccionar fecha de vencimiento"
-              className={errors.due_date ? "border-red-500" : ""}
+              className={`w-full ${errors.due_date ? "border-red-500" : ""}`}
             />
             {errors.due_date && (
               <p className="text-red-500 text-sm mt-1">{errors.due_date}</p>
             )}
           </div>
-          <div>
+          <div className="w-full">
             {" "}
             <label
               htmlFor="priority"
               className="block text-sm font-medium mb-1"
             >
               Prioridad
-            </label>
+            </label>{" "}
             <Select
               value={formData.priority}
               onValueChange={(value) =>
                 setFormData({ ...formData, priority: value as Priority })
               }
             >
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Seleccionar prioridad" />
               </SelectTrigger>
               <SelectContent>
@@ -215,7 +230,7 @@ export default function TaskForm({
               </SelectContent>
             </Select>
           </div>
-          <div>
+          <div className="w-full">
             {" "}
             <label htmlFor="status" className="block text-sm font-medium mb-1">
               Estado
@@ -226,7 +241,7 @@ export default function TaskForm({
                 setFormData({ ...formData, status: value as Status })
               }
             >
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Seleccionar estado" />
               </SelectTrigger>
               <SelectContent>
@@ -236,7 +251,7 @@ export default function TaskForm({
               </SelectContent>
             </Select>
           </div>{" "}
-          <div className="flex justify-end space-x-2 pt-4">
+          <div className="flex justify-end space-x-2 pt-4 w-full">
             <Button type="button" variant="outline" onClick={handleClose}>
               Cancelar
             </Button>

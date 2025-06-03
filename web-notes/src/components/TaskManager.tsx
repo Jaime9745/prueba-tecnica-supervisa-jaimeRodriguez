@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Grid, List } from "lucide-react";
+import { Plus, List } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,7 +25,6 @@ export default function TaskManager() {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [selectedStatuses, setSelectedStatuses] = useState<Status[]>([]);
   const [selectedPriorities, setSelectedPriorities] = useState<Priority[]>([]);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deleteDialog, setDeleteDialog] = useState<{
@@ -186,45 +186,24 @@ export default function TaskManager() {
       </div>
     );
   }
-
   return (
     <div className="max-w-7xl mx-auto p-4 space-y-6">
-      {/* Header */}{" "}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Gestor de Tareas</h1>
-          <p className="text-gray-600 mt-1">
-            {filteredTasks.length} de {tasks.length} tareas
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2">
-          {/* View Mode Toggle */}
-          <div className="flex border rounded-lg p-1">
-            <Button
-              variant={viewMode === "grid" ? "default" : "ghost"}
-              size="sm"
-              onClick={() => setViewMode("grid")}
-              className="p-2"
-            >
-              <Grid className="h-4 w-4" />
-            </Button>
-            <Button
-              variant={viewMode === "list" ? "default" : "ghost"}
-              size="sm"
-              onClick={() => setViewMode("list")}
-              className="p-2"
-            >
-              <List className="h-4 w-4" />
-            </Button>
+      {/* Header */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle className="text-3xl">Gestor de Tareas</CardTitle>
+            <p className="text-gray-600 mt-1">
+              {filteredTasks.length} de {tasks.length} tareas
+            </p>
           </div>
-          {/* Create Task Button */}{" "}
+
           <Button onClick={() => setIsFormOpen(true)}>
             <Plus className="h-4 w-4 mr-2" />
             Nueva Tarea
           </Button>
-        </div>
-      </div>
+        </CardHeader>
+      </Card>
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Filters Sidebar */}{" "}
         <div className="lg:col-span-1">
@@ -258,13 +237,7 @@ export default function TaskManager() {
               </div>
             </div>
           ) : (
-            <div
-              className={
-                viewMode === "grid"
-                  ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"
-                  : "space-y-4"
-              }
-            >
+            <div className="space-y-4">
               {filteredTasks.map((task) => (
                 <TaskCard
                   key={task.id}
