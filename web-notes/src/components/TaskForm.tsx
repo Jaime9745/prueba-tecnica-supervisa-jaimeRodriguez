@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { format, parse } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { DatePicker } from '@/components/ui/date-picker';
 import type { Task, Priority, Status } from '@/types/task';
 
 interface TaskFormProps {
@@ -15,16 +17,47 @@ interface TaskFormProps {
 }
 
 export default function TaskForm({ isOpen, onClose, onSubmit, task, isEdit = false }: TaskFormProps) {
-  const [formData, setFormData] = useState({
-    title: task?.title || '',
-    description: task?.description || '',
-    due_date: task?.due_date || '',
-    priority: task?.priority || 'medium' as Priority,
-    status: task?.status || 'pending' as Status,
-  });
+  // Parse the due_date string to Date object for existing tasks
+  const parseDate = (dateString: string): Date | undefined => {
+    if (!dateString) return undefined;
+    try {
+      return parse(dateString, 'dd/MM/yyyy', new Date());
+    } catch {
+      return undefined;
+    }
+  };
 
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    priority: 'medium' as Priority,
+    status: 'pending' as Status,
+  });
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  // Update form data when task prop changes (for editing)
+  useEffect(() => {
+    if (task && isEdit) {
+      setFormData({
+        title: task.title || '',
+        description: task.description || '',
+        priority: task.priority || 'medium',
+        status: task.status || 'pending',
+      });
+      setSelectedDate(parseDate(task.due_date || ''));
+    } else {
+      // Reset form for new task
+      setFormData({
+        title: '',
+        description: '',
+        priority: 'medium',
+        status: 'pending',
+      });
+      setSelectedDate(undefined);
+    }
+    setErrors({});
+  }, [task, isEdit]);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -41,14 +74,8 @@ export default function TaskForm({ isOpen, onClose, onSubmit, task, isEdit = fal
       newErrors.description = 'Description must be 1000 characters or less';
     }
     
-    if (!formData.due_date) {
+    if (!selectedDate) {
       newErrors.due_date = 'Due date is required';
-    } else {
-      // Validate DD/MM/YYYY format
-      const dateRegex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
-      if (!dateRegex.test(formData.due_date)) {
-        newErrors.due_date = 'Date must be in DD/MM/YYYY format';
-      }
     }
     
     if (Object.keys(newErrors).length > 0) {
@@ -57,18 +84,24 @@ export default function TaskForm({ isOpen, onClose, onSubmit, task, isEdit = fal
     }
     
     setErrors({});
-    onSubmit(formData);
+    
+    // Prepare the data for submission
+    const submitData = {
+      ...formData,
+      due_date: selectedDate ? format(selectedDate, 'dd/MM/yyyy') : '',
+    };
+    
+    onSubmit(submitData);
     handleClose();
   };
-
   const handleClose = () => {
     setFormData({
       title: '',
       description: '',
-      due_date: '',
       priority: 'medium',
       status: 'pending',
     });
+    setSelectedDate(undefined);
     setErrors({});
     onClose();
   };
@@ -107,17 +140,14 @@ export default function TaskForm({ isOpen, onClose, onSubmit, task, isEdit = fal
               rows={3}
             />
             {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
-          </div>
-
-          <div>
+          </div>          <div>
             <label htmlFor="due_date" className="block text-sm font-medium mb-1">
               Due Date *
             </label>
-            <Input
-              id="due_date"
-              value={formData.due_date}
-              onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
-              placeholder="DD/MM/YYYY"
+            <DatePicker
+              date={selectedDate}
+              onDateChange={setSelectedDate}
+              placeholder="Select due date"
               className={errors.due_date ? 'border-red-500' : ''}
             />
             {errors.due_date && <p className="text-red-500 text-sm mt-1">{errors.due_date}</p>}

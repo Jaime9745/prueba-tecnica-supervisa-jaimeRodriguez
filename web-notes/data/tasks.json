@@ -5,9 +5,9 @@
     "description": "Test descripcion",
     "due_date": "12/09/2025",
     "priority": "medium",
-    "status": "pending",
+    "status": "in_progress",
     "created_at": "2025-06-03T19:17:22.422Z",
-    "updated_at": "2025-06-03T19:17:22.422Z"
+    "updated_at": "2025-06-03T19:34:59.005Z"
   },
   {
     "id": "1748978291635",
@@ -18,5 +18,15 @@
     "status": "completed",
     "created_at": "2025-06-03T19:18:11.635Z",
     "updated_at": "2025-06-03T19:18:11.635Z"
+  },
+  {
+    "id": "1748979149258",
+    "title": "Test 3",
+    "description": "Test 3 Description",
+    "due_date": "10/06/2025",
+    "priority": "high",
+    "status": "pending",
+    "created_at": "2025-06-03T19:32:29.258Z",
+    "updated_at": "2025-06-03T19:35:02.191Z"
   }
 ]
