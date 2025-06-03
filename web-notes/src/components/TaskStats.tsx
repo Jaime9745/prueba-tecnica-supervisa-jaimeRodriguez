@@ -1,27 +1,33 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from '@/components/ui/chart';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts';
-import type { Task } from '@/types/task';
+} from "@/components/ui/chart";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from "recharts";
+import type { Task } from "@/types/task";
 
 interface TaskStatsProps {
   tasks: Task[];
 }
 
 const COLORS = {
-  pending: '#d1d5db', // Gray for pending (matches gray-300 for better visibility)
-  in_progress: '#93c5fd', // Blue for in progress (matches blue-300 for better visibility)
-  completed: '#86efac', // Green for completed (matches green-300 for better visibility)
+  pending: "#d1d5db", // Gray for pending (matches gray-300 for better visibility)
+  in_progress: "#93c5fd", // Blue for in progress (matches blue-300 for better visibility)
+  completed: "#86efac", // Green for completed (matches green-300 for better visibility)
 };
 
 const STATUS_LABELS = {
-  pending: 'Pending',
-  in_progress: 'In Progress',
-  completed: 'Completed',
+  pending: "Pendiente",
+  in_progress: "En Progreso",
+  completed: "Completada",
 };
 
 export default function TaskStats({ tasks }: TaskStatsProps) {
@@ -36,27 +42,33 @@ export default function TaskStats({ tasks }: TaskStatsProps) {
       statusCounts[task.status]++;
     });
 
-    return Object.entries(statusCounts).map(([status, count]) => ({
-      status,
-      count,
-      label: STATUS_LABELS[status as keyof typeof STATUS_LABELS],
-      fill: COLORS[status as keyof typeof COLORS],
-    })).filter(item => item.count > 0); // Only show statuses with tasks
+    return Object.entries(statusCounts)
+      .map(([status, count]) => ({
+        status,
+        count,
+        label: STATUS_LABELS[status as keyof typeof STATUS_LABELS],
+        fill: COLORS[status as keyof typeof COLORS],
+      }))
+      .filter((item) => item.count > 0); // Only show statuses with tasks
   }, [tasks]);
 
   const totalTasks = tasks.length;
-  const completedTasks = tasks.filter(task => task.status === 'completed').length;
-  const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;  const chartConfig = {
+  const completedTasks = tasks.filter(
+    (task) => task.status === "completed"
+  ).length;
+  const completionRate =
+    totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+  const chartConfig = {
     pending: {
-      label: "Pending",
+      label: "Pendiente",
       color: "#d1d5db", // Gray for pending (matches gray-300)
     },
     in_progress: {
-      label: "In Progress", 
+      label: "En Progreso",
       color: "#93c5fd", // Blue for in progress (matches blue-300)
     },
     completed: {
-      label: "Completed",
+      label: "Completada",
       color: "#86efac", // Green for completed (matches green-300)
     },
   };
@@ -64,12 +76,15 @@ export default function TaskStats({ tasks }: TaskStatsProps) {
   if (totalTasks === 0) {
     return (
       <Card>
+        {" "}
         <CardHeader>
-          <CardTitle>Task Statistics</CardTitle>
-          <CardDescription>Overview of your task progress</CardDescription>
+          <CardTitle>Estadísticas de Tareas</CardTitle>
+          <CardDescription>Resumen de tu progreso en tareas</CardDescription>
         </CardHeader>
         <CardContent className="flex items-center justify-center h-[300px]">
-          <p className="text-muted-foreground">No tasks yet. Create your first task to see statistics!</p>
+          <p className="text-muted-foreground">
+            No hay tareas aún. ¡Crea tu primera tarea para ver estadísticas!
+          </p>
         </CardContent>
       </Card>
     );
@@ -77,10 +92,11 @@ export default function TaskStats({ tasks }: TaskStatsProps) {
 
   return (
     <Card>
+      {" "}
       <CardHeader>
-        <CardTitle>Task Statistics</CardTitle>
+        <CardTitle>Estadísticas de Tareas</CardTitle>
         <CardDescription>
-          {totalTasks} total tasks • {completionRate}% completion rate
+          {totalTasks} tareas totales • {completionRate}% tasa de completitud
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -92,7 +108,7 @@ export default function TaskStats({ tasks }: TaskStatsProps) {
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent hideLabel />}
-            />
+            />{" "}
             <Pie
               data={chartData}
               dataKey="count"
@@ -101,43 +117,32 @@ export default function TaskStats({ tasks }: TaskStatsProps) {
               cy="50%"
               outerRadius={80}
               fill="#8884d8"
-              label={({ label, count, percent }) => 
-                `${label}: ${count} (${(percent * 100).toFixed(0)}%)`
-              }
             >
               {chartData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.fill} />
               ))}
-            </Pie>            <Legend 
-              verticalAlign="bottom" 
-              height={36}
-              formatter={(value, entry: any) => (
-                <span style={{ color: entry.color }}>
-                  {value}: {entry.payload?.count || 0}
-                </span>
-              )}
-            />
+            </Pie>{" "}
           </PieChart>
         </ChartContainer>
-          {/* Summary Stats */}
+        {/* Summary Stats */}
         <div className="grid grid-cols-3 gap-4 mt-4">
           <div className="text-center">
             <div className="text-2xl font-bold text-gray-700">
-              {tasks.filter(t => t.status === 'pending').length}
-            </div>
-            <div className="text-sm text-muted-foreground">Pending</div>
+              {tasks.filter((t) => t.status === "pending").length}
+            </div>{" "}
+            <div className="text-sm text-muted-foreground">Pendiente</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-blue-700">
-              {tasks.filter(t => t.status === 'in_progress').length}
+              {tasks.filter((t) => t.status === "in_progress").length}
             </div>
-            <div className="text-sm text-muted-foreground">In Progress</div>
+            <div className="text-sm text-muted-foreground">En Progreso</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-green-700">
               {completedTasks}
             </div>
-            <div className="text-sm text-muted-foreground">Completed</div>
+            <div className="text-sm text-muted-foreground">Completada</div>
           </div>
         </div>
       </CardContent>

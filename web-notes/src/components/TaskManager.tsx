@@ -35,21 +35,20 @@ export default function TaskManager() {
     isOpen: false,
     taskId: null,
     taskTitle: "",
-  });
-
-  // Fetch tasks
+  }); // Fetch tasks
   const fetchTasks = async () => {
     try {
       setLoading(true);
+
       const response = await fetch("/api/tasks");
       if (!response.ok) {
         throw new Error("Failed to fetch tasks");
       }
       const data = await response.json();
       setTasks(data);
+      setLoading(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
-    } finally {
       setLoading(false);
     }
   };
@@ -170,11 +169,12 @@ export default function TaskManager() {
     setSelectedStatuses([]);
     setSelectedPriorities([]);
   };
-
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-lg text-gray-600">Loading tasks...</div>
+        <div className="text-lg text-gray-600 font-bold">
+          Cargando tareas...
+        </div>
       </div>
     );
   }
@@ -189,12 +189,12 @@ export default function TaskManager() {
 
   return (
     <div className="max-w-7xl mx-auto p-4 space-y-6">
-      {/* Header */}
+      {/* Header */}{" "}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Task Manager</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Gestor de Tareas</h1>
           <p className="text-gray-600 mt-1">
-            {filteredTasks.length} of {tasks.length} tasks
+            {filteredTasks.length} de {tasks.length} tareas
           </p>
         </div>
 
@@ -218,16 +218,16 @@ export default function TaskManager() {
               <List className="h-4 w-4" />
             </Button>
           </div>
-
-          {/* Create Task Button */}
+          {/* Create Task Button */}{" "}
           <Button onClick={() => setIsFormOpen(true)}>
             <Plus className="h-4 w-4 mr-2" />
-            New Task
+            Nueva Tarea
           </Button>
         </div>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Filters Sidebar */}        <div className="lg:col-span-1">
+        {/* Filters Sidebar */}{" "}
+        <div className="lg:col-span-1">
           <TaskFilters
             selectedStatuses={selectedStatuses}
             selectedPriorities={selectedPriorities}
@@ -235,26 +235,26 @@ export default function TaskManager() {
             onPriorityChange={setSelectedPriorities}
             onClearFilters={handleClearFilters}
           />
-          
+
           {/* Task Statistics */}
           <div className="mt-6">
             <TaskStats tasks={tasks} />
           </div>
         </div>
-
         {/* Tasks Grid/List */}
         <div className="lg:col-span-3">
           {filteredTasks.length === 0 ? (
             <div className="text-center py-12">
+              {" "}
               <div className="text-gray-500 text-lg mb-2">
                 {tasks.length === 0
-                  ? "No tasks yet"
-                  : "No tasks match your filters"}
+                  ? "No hay tareas todavía"
+                  : "No hay tareas que coincidan con tus filtros"}
               </div>
               <div className="text-gray-400">
                 {tasks.length === 0
-                  ? "Create your first task to get started"
-                  : "Try adjusting your filters"}
+                  ? "Crea tu primera tarea para comenzar"
+                  : "Intenta ajustar tus filtros"}
               </div>
             </div>
           ) : (
@@ -305,21 +305,22 @@ export default function TaskManager() {
         }}
       >
         <AlertDialogContent>
+          {" "}
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Task</AlertDialogTitle>
+            <AlertDialogTitle>Eliminar Tarea</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete "
-              <strong>{deleteDialog.taskTitle}</strong>"? This action cannot be
-              undone.
+              ¿Estás seguro de que deseas eliminar "
+              <strong>{deleteDialog.taskTitle}</strong>"? Esta acción no se
+              puede deshacer.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmDeleteTask}
               className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
             >
-              Delete Task
+              Eliminar Tarea
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

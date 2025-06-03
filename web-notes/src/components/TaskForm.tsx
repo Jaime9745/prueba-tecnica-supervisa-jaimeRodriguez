@@ -80,19 +80,19 @@ export default function TaskForm({
 
     // Validate form
     const newErrors: Record<string, string> = {};
-
     if (!formData.title.trim()) {
-      newErrors.title = "Title is required";
+      newErrors.title = "El título es obligatorio";
     } else if (formData.title.length > 150) {
-      newErrors.title = "Title must be 150 characters or less";
+      newErrors.title = "El título debe tener 150 caracteres o menos";
     }
 
     if (formData.description.length > 1000) {
-      newErrors.description = "Description must be 1000 characters or less";
+      newErrors.description =
+        "La descripción debe tener 1000 caracteres o menos";
     }
 
     if (!selectedDate) {
-      newErrors.due_date = "Due date is required";
+      newErrors.due_date = "La fecha de vencimiento es obligatoria";
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -125,14 +125,18 @@ export default function TaskForm({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
+      {" "}
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{isEdit ? "Edit Task" : "Create New Task"}</DialogTitle>
+          <DialogTitle>
+            {isEdit ? "Editar Tarea" : "Crear Nueva Tarea"}
+          </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
+            {" "}
             <label htmlFor="title" className="block text-sm font-medium mb-1">
-              Title *
+              Título *
             </label>
             <Input
               id="title"
@@ -140,7 +144,7 @@ export default function TaskForm({
               onChange={(e) =>
                 setFormData({ ...formData, title: e.target.value })
               }
-              placeholder="Enter task title"
+              placeholder="Ingresa el título de la tarea"
               className={errors.title ? "border-red-500" : ""}
             />
             {errors.title && (
@@ -148,11 +152,12 @@ export default function TaskForm({
             )}
           </div>
           <div>
+            {" "}
             <label
               htmlFor="description"
               className="block text-sm font-medium mb-1"
             >
-              Description
+              Descripción
             </label>
             <Textarea
               id="description"
@@ -160,7 +165,7 @@ export default function TaskForm({
               onChange={(e) =>
                 setFormData({ ...formData, description: e.target.value })
               }
-              placeholder="Enter task description (optional)"
+              placeholder="Ingresa la descripción de la tarea (opcional)"
               className={errors.description ? "border-red-500" : ""}
               rows={3}
             />
@@ -169,16 +174,17 @@ export default function TaskForm({
             )}
           </div>{" "}
           <div>
+            {" "}
             <label
               htmlFor="due_date"
               className="block text-sm font-medium mb-1"
             >
-              Due Date *
+              Fecha de Vencimiento *
             </label>
             <DatePicker
               date={selectedDate}
               onDateChange={setSelectedDate}
-              placeholder="Select due date"
+              placeholder="Seleccionar fecha de vencimiento"
               className={errors.due_date ? "border-red-500" : ""}
             />
             {errors.due_date && (
@@ -186,11 +192,12 @@ export default function TaskForm({
             )}
           </div>
           <div>
+            {" "}
             <label
               htmlFor="priority"
               className="block text-sm font-medium mb-1"
             >
-              Priority
+              Prioridad
             </label>
             <Select
               value={formData.priority}
@@ -199,18 +206,19 @@ export default function TaskForm({
               }
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select priority" />
+                <SelectValue placeholder="Seleccionar prioridad" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="low">Low</SelectItem>
-                <SelectItem value="medium">Medium</SelectItem>
-                <SelectItem value="high">High</SelectItem>
+                <SelectItem value="low">Baja</SelectItem>
+                <SelectItem value="medium">Media</SelectItem>
+                <SelectItem value="high">Alta</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div>
+            {" "}
             <label htmlFor="status" className="block text-sm font-medium mb-1">
-              Status
+              Estado
             </label>
             <Select
               value={formData.status}
@@ -219,21 +227,21 @@ export default function TaskForm({
               }
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select status" />
+                <SelectValue placeholder="Seleccionar estado" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="in_progress">In Progress</SelectItem>
-                <SelectItem value="completed">Completed</SelectItem>
+                <SelectItem value="pending">Pendiente</SelectItem>
+                <SelectItem value="in_progress">En Progreso</SelectItem>
+                <SelectItem value="completed">Completada</SelectItem>
               </SelectContent>
             </Select>
-          </div>
+          </div>{" "}
           <div className="flex justify-end space-x-2 pt-4">
             <Button type="button" variant="outline" onClick={handleClose}>
-              Cancel
+              Cancelar
             </Button>
             <Button type="submit">
-              {isEdit ? "Update Task" : "Create Task"}
+              {isEdit ? "Actualizar Tarea" : "Crear Tarea"}
             </Button>
           </div>
         </form>

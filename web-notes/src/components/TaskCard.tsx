@@ -41,13 +41,24 @@ export default function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength) + "...";
   };
-
   const formatStatus = (status: string) => {
+    if (status === "pending") return "Pendiente";
+    if (status === "in_progress") return "En Progreso";
+    if (status === "completed") return "Completada";
     return status.replace("_", " ").replace(/\b\w/g, (l) => l.toUpperCase());
   };
 
+  const formatPriority = (priority: string) => {
+    if (priority === "low") return "Baja";
+    if (priority === "medium") return "Media";
+    if (priority === "high") return "Alta";
+    return priority.charAt(0).toUpperCase() + priority.slice(1);
+  };
+
   return (
-    <Card className="h-full flex flex-col">      <CardHeader className="pb-1">
+    <Card className="h-full flex flex-col">
+      {" "}
+      <CardHeader className="pb-1">
         <div className="flex items-start justify-between gap-2">
           <CardTitle className="text-lg font-semibold line-clamp-2">
             {task.title}
@@ -72,7 +83,6 @@ export default function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
           </div>
         </div>
       </CardHeader>
-
       <CardContent className="flex-1 flex flex-col pt-2">
         <div className="flex-1">
           {task.description && (
@@ -84,11 +94,10 @@ export default function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
           <div className="text-sm text-gray-500 mb-3 flex items-center">
             <Calendar className="h-3.5 w-3.5 mr-1 opacity-70" /> {task.due_date}
           </div>
-        </div>
-
+        </div>{" "}
         <div className="flex flex-wrap gap-2 mt-auto">
           <Badge className={getPriorityColor(task.priority)}>
-            {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+            {formatPriority(task.priority)}
           </Badge>
           <Badge className={getStatusColor(task.status)}>
             {formatStatus(task.status)}

@@ -82,8 +82,9 @@ export default function TaskFilters({
 
   return (
     <div className="bg-white p-4 rounded-lg border shadow-sm">
+      {" "}
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold">Filters</h3>
+        <h3 className="text-lg font-semibold">Filtros</h3>
         {hasActiveFilters && (
           <Button
             variant="outline"
@@ -92,14 +93,14 @@ export default function TaskFilters({
             className="text-sm"
           >
             <X className="h-4 w-4 mr-1" />
-            Clear All
+            Limpiar Todo
           </Button>
         )}
       </div>
-
       <div className="space-y-4">
         <div>
-          <h4 className="text-sm font-medium mb-2">Status</h4>
+          {" "}
+          <h4 className="text-sm font-medium mb-2">Estado</h4>
           <div className="flex flex-wrap gap-2">
             {statuses.map((status) => {
               const isSelected = selectedStatuses.includes(status);
@@ -113,7 +114,13 @@ export default function TaskFilters({
                   )}`}
                   onClick={() => handleStatusToggle(status)}
                 >
-                  {formatStatus(status)}
+                  {status === "pending"
+                    ? "Pendiente"
+                    : status === "in_progress"
+                    ? "En Progreso"
+                    : status === "completed"
+                    ? "Completada"
+                    : formatStatus(status)}
                 </Badge>
               );
             })}
@@ -121,7 +128,8 @@ export default function TaskFilters({
         </div>
 
         <div>
-          <h4 className="text-sm font-medium mb-2">Priority</h4>
+          {" "}
+          <h4 className="text-sm font-medium mb-2">Prioridad</h4>
           <div className="flex flex-wrap gap-2">
             {priorities.map((priority) => {
               const isSelected = selectedPriorities.includes(priority);
@@ -135,7 +143,14 @@ export default function TaskFilters({
                   )}`}
                   onClick={() => handlePriorityToggle(priority)}
                 >
-                  {priority.charAt(0).toUpperCase() + priority.slice(1)}
+                  {priority === "low"
+                    ? "Baja"
+                    : priority === "medium"
+                    ? "Media"
+                    : priority === "high"
+                    ? "Alta"
+                    : (priority as string).charAt(0).toUpperCase() +
+                      (priority as string).slice(1)}
                 </Badge>
               );
             })}
