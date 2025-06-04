@@ -1,0 +1,36 @@
+{
+  "name": "gestor-tareas-completo",
+  "version": "1.0.0",
+  "description": "Sistema integral de gestión de tareas con backend Express.js y frontend Astro",
+  "scripts": {
+    "dev": "npm run install:mobile && concurrently \"npm run dev:backend\" \"npm run dev:web\"",
+    "dev:backend": "cd backend && npm install && npm run dev",
+    "dev:web": "cd web-notes && npm install --legacy-peer-deps && npm run dev",
+    "install:all": "npm run install:backend && npm run install:web && npm run install:mobile",
+    "install:backend": "cd backend && npm install",
+    "install:web": "cd web-notes && npm install --legacy-peer-deps",
+    "install:mobile": "cd app_notes && flutter pub get",
+    "build": "npm run build:backend && npm run build:web",
+    "build:backend": "cd backend && npm run build",
+    "build:web": "cd web-notes && npm run build",
+    "start": "concurrently \"npm run start:backend\" \"npm run start:web\"",
+    "start:backend": "cd backend && npm start",
+    "start:web": "cd web-notes && npm run preview"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": [
+    "task-manager",
+    "express",
+    "astro",
+    "flutter",
+    "typescript",
+    "nodejs"
+  ],
+  "author": "Jaime Rodriguez",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
