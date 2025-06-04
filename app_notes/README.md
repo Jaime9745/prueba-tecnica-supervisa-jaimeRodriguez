@@ -128,12 +128,3 @@ La aplicación está completamente traducida al español, incluyendo:
 ## Configuración de Desarrollo
 
 Para desarrollo, asegúrate de que el backend esté ejecutándose en `localhost:3001`. Para producción, actualiza la URL en `lib/config/app_config.dart`.
-
-## Manejo de Errores
-
-La aplicación maneja varios escenarios de error:
-
-- Errores de conectividad de red
-- Respuestas de error del servidor
-- Errores de validación de datos
-- Timeouts de peticiones

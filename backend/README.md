@@ -232,14 +232,3 @@ curl -X POST http://localhost:3001/api/tasks \
     "user_email": "test@example.com"
   }'
 ```
-
-## Producción
-
-Para despliegue en producción:
-
-1. Compila el proyecto: `npm run build`
-2. Configura variables de entorno apropiadas
-3. Usa un administrador de procesos como PM2
-4. Configura un proxy reverso (nginx/Apache)
-5. Implementa una base de datos real
-6. Configura SSL/HTTPS

@@ -437,11 +437,3 @@ app.use(
   })
 );
 ```
-
-## Contribuir
-
-1. Haz fork del repositorio
-2. Crea una rama para tu funcionalidad
-3. Realiza tus cambios
-4. Prueba en todas las plataformas
-5. Envía un pull request
