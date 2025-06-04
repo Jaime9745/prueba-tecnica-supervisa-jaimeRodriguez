@@ -1,0 +1,42 @@
+[
+  {
+    "task_id": "1748978242422",
+    "title": "Revisar presupuesto mensual",
+    "description": "Revisar todos los gastos del mes de mayo, comparar con el presupuesto inicial y preparar informe para la\nreunión del viernes",
+    "due_date": "14/06/2025",
+    "priority": "high",
+    "status": "pending",
+    "origin_framework": "astro",
+    "user_email": "2220211014@estudiantesunibague.edu.co"
+  },
+  {
+    "task_id": "1748978291635",
+    "title": "Llamar al cliente ABC",
+    "description": "Contactar para seguimiento del proyecto y confirmar préxima reunión",
+    "due_date": "09/06/2025",
+    "priority": "medium",
+    "status": "in_progress",
+    "origin_framework": "astro",
+    "user_email": "2220211014@estudiantesunibague.edu.co"
+  },
+  {
+    "task_id": "1748979149258",
+    "title": "Actualizar Documentación",
+    "description": "",
+    "due_date": "",
+    "priority": "low",
+    "status": "completed",
+    "origin_framework": "astro",
+    "user_email": "2220211014@estudiantesunibague.edu.co"
+  },
+  {
+    "task_id": "1748990508125",
+    "title": "Agregar Colaborador al Repositorio",
+    "description": "Compartir el repositorio del proyecto otorgando acceso a la cuenta\nCoordinador.desarrollo4@supervisa.co",
+    "due_date": "05/06/2025",
+    "priority": "high",
+    "status": "pending",
+    "origin_framework": "astro",
+    "user_email": "2220211014@estudiantesunibague.edu.co"
+  }
+]
