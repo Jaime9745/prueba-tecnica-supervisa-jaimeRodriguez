@@ -22,7 +22,6 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
   DateTime? _selectedDate;
   final TaskService _taskService = TaskService();
   bool _isLoading = false;
-
   @override
   void initState() {
     super.initState();
@@ -30,10 +29,12 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
       // Pre-fill form with existing task data
       _titleController.text = widget.task!.title;
       _descriptionController.text = widget.task!.description;
-      _dueDateController.text = widget.task!.dueDate;
+      _dueDateController.text = widget.task!.dueDate ?? '';
       _selectedPriority = widget.task!.priority;
       _selectedStatus = widget.task!.status;
-      _selectedDate = Task.parseDate(widget.task!.dueDate);
+      _selectedDate = widget.task!.dueDate != null
+          ? Task.parseDate(widget.task!.dueDate!)
+          : null;
     }
   }
 
@@ -69,23 +70,26 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
     setState(() {
       _isLoading = true;
     });
-
     try {
       final task = Task(
         taskId: widget.task?.taskId ?? Task.generateTaskId(),
         title: _titleController.text.trim(),
         description: _descriptionController.text.trim(),
-        dueDate: _dueDateController.text,
+        dueDate: _dueDateController.text.isEmpty
+            ? null
+            : _dueDateController.text,
         priority: _selectedPriority,
         status: _selectedStatus,
       );
 
       if (widget.task == null) {
         // Create new task
-        await _taskService.addTask(task);
+        final createdTask = await _taskService.addTask(task);
+        print('Task created successfully: ${createdTask.taskId}');
       } else {
         // Update existing task
-        await _taskService.updateTask(task);
+        final updatedTask = await _taskService.updateTask(task);
+        print('Task updated successfully: ${updatedTask.taskId}');
       }
 
       if (mounted) {

@@ -38,15 +38,5 @@
     "status": "pending",
     "origin_framework": "astro",
     "user_email": "2220211014@estudiantesunibague.edu.co"
-  },
-  {
-    "task_id": "1749044338845",
-    "title": "Enviar Correo",
-    "description": "",
-    "priority": "high",
-    "status": "pending",
-    "due_date": "10/06/2025",
-    "origin_framework": "astro",
-    "user_email": "2220211014@estudiantesunibague.edu.co"
   }
 ]

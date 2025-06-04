@@ -470,10 +470,13 @@ class _TaskListScreenState extends State<TaskListScreen> {
                                       ),
                                       const SizedBox(width: 4),
                                       Text(
-                                        task.dueDate,
+                                        task.dueDate ?? 'No due date',
                                         style: TextStyle(
                                           color: Colors.grey[600],
                                           fontSize: 12,
+                                          fontStyle: task.dueDate == null
+                                              ? FontStyle.italic
+                                              : FontStyle.normal,
                                         ),
                                       ),
                                     ],

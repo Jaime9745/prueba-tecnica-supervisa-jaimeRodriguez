@@ -73,7 +73,10 @@ class TaskUtils {
       final now = DateTime.now();
 
       return tasks.where((task) {
-        final dueDate = Task.parseDate(task.dueDate);
+        if (task.dueDate == null || task.dueDate!.isEmpty) {
+          return false; // No due date means not overdue
+        }
+        final dueDate = Task.parseDate(task.dueDate!);
         return dueDate != null &&
             dueDate.isBefore(now) &&
             task.status != TaskStatus.completed;
@@ -93,6 +96,7 @@ class TaskUtils {
       return tasks
           .where(
             (task) =>
+                task.dueDate != null &&
                 task.dueDate == todayString &&
                 task.status != TaskStatus.completed,
           )
@@ -151,7 +155,7 @@ class TaskUtils {
   static String? validateTask({
     required String title,
     required String description,
-    required String dueDate,
+    String? dueDate, // Made optional
   }) {
     if (title.trim().isEmpty) {
       return 'Title is required';
@@ -161,13 +165,12 @@ class TaskUtils {
       return 'Description is required';
     }
 
-    if (dueDate.trim().isEmpty) {
-      return 'Due date is required';
-    }
-
-    final parsedDate = Task.parseDate(dueDate);
-    if (parsedDate == null) {
-      return 'Invalid due date format';
+    // Due date is now optional
+    if (dueDate != null && dueDate.trim().isNotEmpty) {
+      final parsedDate = Task.parseDate(dueDate);
+      if (parsedDate == null) {
+        return 'Invalid due date format';
+      }
     }
 
     return null; // No validation errors

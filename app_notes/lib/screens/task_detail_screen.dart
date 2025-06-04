@@ -232,9 +232,14 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            _currentTask.dueDate,
+                            _currentTask.dueDate ?? 'No due date',
                             style: Theme.of(context).textTheme.bodyLarge
-                                ?.copyWith(fontWeight: FontWeight.w500),
+                                ?.copyWith(
+                                  fontWeight: FontWeight.w500,
+                                  color: _currentTask.dueDate == null
+                                      ? Colors.grey[500]
+                                      : null,
+                                ),
                           ),
                         ],
                       ),
