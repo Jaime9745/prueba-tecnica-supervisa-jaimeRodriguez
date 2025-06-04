@@ -3,7 +3,8 @@ import 'package:http/http.dart' as http;
 import '../models/task.dart';
 import '../config/app_config.dart';
 
-class TaskService {  // Headers for API calls
+class TaskService {
+  // Headers for API calls
   static const Map<String, String> _headers = {
     'Content-Type': 'application/json',
     'X-Origin-Framework': 'flutter',
@@ -37,7 +38,7 @@ class TaskService {  // Headers for API calls
       return tasksJson.map((json) => Task.fromJson(json)).toList();
     } catch (e) {
       print('Error loading tasks: $e');
-      throw Exception('Failed to load tasks: $e');
+      throw Exception('Error al cargar tareas: $e');
     }
   }
 
@@ -62,7 +63,7 @@ class TaskService {  // Headers for API calls
       return Task.fromJson(data['data']);
     } catch (e) {
       print('Error adding task: $e');
-      throw Exception('Failed to add task: $e');
+      throw Exception('Error al agregar tarea: $e');
     }
   }
 
@@ -87,7 +88,7 @@ class TaskService {  // Headers for API calls
       return Task.fromJson(data['data']);
     } catch (e) {
       print('Error updating task: $e');
-      throw Exception('Failed to update task: $e');
+      throw Exception('Error al actualizar tarea: $e');
     }
   }
 
@@ -102,7 +103,7 @@ class TaskService {  // Headers for API calls
       _handleResponse(response);
     } catch (e) {
       print('Error deleting task: $e');
-      throw Exception('Failed to delete task: $e');
+      throw Exception('Error al eliminar tarea: $e');
     }
   }
 

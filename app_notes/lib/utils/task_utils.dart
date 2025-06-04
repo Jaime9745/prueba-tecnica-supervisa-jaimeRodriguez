@@ -15,7 +15,7 @@ class TaskUtils {
       final jsonList = tasks.map((task) => task.toJson()).toList();
       return json.encode(jsonList);
     } catch (e) {
-      throw Exception('Failed to export tasks: $e');
+      throw Exception('Error al exportar tareas: $e');
     }
   }
 
@@ -25,7 +25,7 @@ class TaskUtils {
       final List<dynamic> jsonList = json.decode(jsonString);
       return jsonList.map((json) => Task.fromJson(json)).toList();
     } catch (e) {
-      throw Exception('Failed to import tasks: $e');
+      throw Exception('Error al importar tareas: $e');
     }
   }
 
@@ -111,8 +111,8 @@ class TaskUtils {
     BuildContext context, {
     required String title,
     required String content,
-    String confirmText = 'Confirm',
-    String cancelText = 'Cancel',
+    String confirmText = 'Confirmar',
+    String cancelText = 'Cancelar',
   }) async {
     final result = await showDialog<bool>(
       context: context,
@@ -158,18 +158,18 @@ class TaskUtils {
     String? dueDate, // Made optional
   }) {
     if (title.trim().isEmpty) {
-      return 'Title is required';
+      return 'El título es requerido';
     }
 
     if (description.trim().isEmpty) {
-      return 'Description is required';
+      return 'La descripción es requerida';
     }
 
     // Due date is now optional
     if (dueDate != null && dueDate.trim().isNotEmpty) {
       final parsedDate = Task.parseDate(dueDate);
       if (parsedDate == null) {
-        return 'Invalid due date format';
+        return 'Formato de fecha inválido';
       }
     }
 
@@ -186,7 +186,7 @@ class TaskUtils {
 
       return 'File: ${file.path}\nExists: $exists\nSize: ${size} bytes';
     } catch (e) {
-      return 'Error getting file info: $e';
+      return 'Error obteniendo información del archivo: $e';
     }
   }
 }

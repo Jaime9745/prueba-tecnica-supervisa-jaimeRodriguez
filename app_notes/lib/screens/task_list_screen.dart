@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/task.dart';
 import '../services/task_service.dart';
+import '../utils/translations.dart';
 import 'task_form_screen.dart';
 import 'task_detail_screen.dart';
 
@@ -38,7 +39,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error loading tasks: $e'),
+            content: Text('Error cargando tareas: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -71,35 +72,41 @@ class _TaskListScreenState extends State<TaskListScreen> {
 
   String _getEmptyStateText() {
     if (_selectedStatusFilter == 'all' && _selectedPriorityFilter == 'all') {
-      return 'No tasks yet';
+      return 'Aún no hay tareas';
     }
 
     List<String> filters = [];
     if (_selectedStatusFilter != 'all') {
-      filters.add(_selectedStatusFilter.replaceAll('_', ' '));
+      filters.add(
+        Translations.getStatusText(_selectedStatusFilter).toLowerCase(),
+      );
     }
     if (_selectedPriorityFilter != 'all') {
-      filters.add('$_selectedPriorityFilter priority');
+      filters.add(
+        'prioridad ${Translations.getPriorityText(_selectedPriorityFilter).toLowerCase()}',
+      );
     }
 
-    return 'No ${filters.join(' ')} tasks';
+    return 'No hay tareas ${filters.join(' ')}';
   }
 
   Future<void> _deleteTask(String taskId) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Task'),
-        content: const Text('Are you sure you want to delete this task?'),
+        title: const Text('Eliminar Tarea'),
+        content: const Text(
+          '¿Estás seguro de que quieres eliminar esta tarea?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: const Text('Cancelar'),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Delete'),
+            child: const Text('Eliminar'),
           ),
         ],
       ),
@@ -112,7 +119,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Task deleted successfully'),
+              content: Text('Tarea eliminada exitosamente'),
               backgroundColor: Colors.green,
             ),
           );
@@ -121,7 +128,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Error deleting task: $e'),
+              content: Text('Error eliminando tarea: $e'),
               backgroundColor: Colors.red,
             ),
           );
@@ -180,9 +187,16 @@ class _TaskListScreenState extends State<TaskListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tasks'),
+        title: const Text('Tareas'),
         backgroundColor: const Color.fromARGB(255, 0, 85, 175),
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: _loadTasks,
+            tooltip: 'Actualizar Tareas',
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -200,139 +214,163 @@ class _TaskListScreenState extends State<TaskListScreen> {
                 ),
               ],
             ),
-            child: Row(
+            child: Column(
               children: [
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.grey[300]!),
-                    ),
-                    child: DropdownButtonFormField<String>(
-                      value: _selectedStatusFilter,
-                      decoration: InputDecoration(
-                        labelText: 'Status',
-                        labelStyle: TextStyle(color: Colors.grey[600]),
-                        border: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
+                Row(
+                  children: [
+                    Flexible(
+                      flex: 3,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.grey[300]!),
                         ),
-                      ),
-                      dropdownColor: Colors.white,
-                      items: [
-                        DropdownMenuItem(
-                          value: 'all',
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.list,
-                                size: 16,
-                                color: Colors.grey[600],
-                              ),
-                              const SizedBox(width: 8),
-                              const Text('All Status'),
-                            ],
-                          ),
-                        ),
-                        ...TaskStatus.values.map(
-                          (status) => DropdownMenuItem(
-                            value: status,
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 12,
-                                  height: 12,
-                                  decoration: BoxDecoration(
-                                    color: _getStatusColor(status),
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  status.replaceAll('_', ' ').toUpperCase(),
-                                  style: const TextStyle(fontSize: 14),
-                                ),
-                              ],
+                        child: DropdownButtonFormField<String>(
+                          value: _selectedStatusFilter,
+                          isExpanded: true,
+                          decoration: InputDecoration(
+                            labelText: 'Estado',
+                            labelStyle: TextStyle(color: Colors.grey[600]),
+                            border: InputBorder.none,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
                             ),
                           ),
-                        ),
-                      ],
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedStatusFilter = value!;
-                        });
-                      },
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.grey[300]!),
-                    ),
-                    child: DropdownButtonFormField<String>(
-                      value: _selectedPriorityFilter,
-                      decoration: InputDecoration(
-                        labelText: 'Priority',
-                        labelStyle: TextStyle(color: Colors.grey[600]),
-                        border: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
+                          dropdownColor: Colors.white,
+                          items: [
+                            DropdownMenuItem(
+                              value: 'all',
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.list,
+                                    size: 16,
+                                    color: Colors.grey[600],
+                                  ),
+                                  const SizedBox(width: 8),
+                                  const Flexible(
+                                    child: Text(
+                                      'Todos los Estados',
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            ...TaskStatus.values.map(
+                              (status) => DropdownMenuItem(
+                                value: status,
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 12,
+                                      height: 12,
+                                      decoration: BoxDecoration(
+                                        color: _getStatusColor(status),
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Flexible(
+                                      child: Text(
+                                        Translations.getStatusText(status),
+                                        style: const TextStyle(fontSize: 14),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedStatusFilter = value!;
+                            });
+                          },
                         ),
                       ),
-                      dropdownColor: Colors.white,
-                      items: [
-                        DropdownMenuItem(
-                          value: 'all',
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.list,
-                                size: 16,
-                                color: Colors.grey[600],
-                              ),
-                              const SizedBox(width: 8),
-                              const Text('All Priority'),
-                            ],
-                          ),
+                    ),
+                    const SizedBox(width: 16),
+                    Flexible(
+                      flex: 3,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.grey[300]!),
                         ),
-                        ...TaskPriority.values.map(
-                          (priority) => DropdownMenuItem(
-                            value: priority,
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 12,
-                                  height: 12,
-                                  decoration: BoxDecoration(
-                                    color: _getPriorityColor(priority),
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  priority.toUpperCase(),
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
+                        child: DropdownButtonFormField<String>(
+                          value: _selectedPriorityFilter,
+                          isExpanded: true,
+                          decoration: InputDecoration(
+                            labelText: 'Prioridad',
+                            labelStyle: TextStyle(color: Colors.grey[600]),
+                            border: InputBorder.none,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
                             ),
                           ),
+                          dropdownColor: Colors.white,
+                          items: [
+                            DropdownMenuItem(
+                              value: 'all',
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.list,
+                                    size: 16,
+                                    color: Colors.grey[600],
+                                  ),
+                                  const SizedBox(width: 8),
+                                  const Flexible(
+                                    child: Text(
+                                      'Todas las Prioridades',
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            ...TaskPriority.values.map(
+                              (priority) => DropdownMenuItem(
+                                value: priority,
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 12,
+                                      height: 12,
+                                      decoration: BoxDecoration(
+                                        color: _getPriorityColor(priority),
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Flexible(
+                                      child: Text(
+                                        Translations.getPriorityText(priority),
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedPriorityFilter = value!;
+                            });
+                          },
                         ),
-                      ],
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedPriorityFilter = value!;
-                        });
-                      },
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ],
             ),
@@ -355,7 +393,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
                         ),
                         const SizedBox(height: 8),
                         const Text(
-                          'Tap the + button to add a new task',
+                          'Toca el botón + para agregar una nueva tarea',
                           style: TextStyle(color: Colors.grey),
                         ),
                       ],
@@ -398,15 +436,15 @@ class _TaskListScreenState extends State<TaskListScreen> {
                               final confirmed = await showDialog<bool>(
                                 context: context,
                                 builder: (context) => AlertDialog(
-                                  title: const Text('Delete Task'),
+                                  title: const Text('Eliminar Tarea'),
                                   content: const Text(
-                                    'Are you sure you want to delete this task?',
+                                    '¿Estás seguro de que quieres eliminar esta tarea?',
                                   ),
                                   actions: [
                                     TextButton(
                                       onPressed: () =>
                                           Navigator.of(context).pop(false),
-                                      child: const Text('Cancel'),
+                                      child: const Text('Cancelar'),
                                     ),
                                     TextButton(
                                       onPressed: () =>
@@ -414,7 +452,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
                                       style: TextButton.styleFrom(
                                         foregroundColor: Colors.red,
                                       ),
-                                      child: const Text('Delete'),
+                                      child: const Text('Eliminar'),
                                     ),
                                   ],
                                 ),
@@ -423,7 +461,9 @@ class _TaskListScreenState extends State<TaskListScreen> {
                                 await _taskService.deleteTask(task.taskId);
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    content: Text('Task deleted successfully'),
+                                    content: Text(
+                                      'Tarea eliminada exitosamente',
+                                    ),
                                     backgroundColor: Colors.green,
                                   ),
                                 );
@@ -470,7 +510,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
                                       ),
                                       const SizedBox(width: 4),
                                       Text(
-                                        task.dueDate ?? 'No due date',
+                                        task.dueDate ?? 'Sin fecha límite',
                                         style: TextStyle(
                                           color: Colors.grey[600],
                                           fontSize: 12,
@@ -499,7 +539,9 @@ class _TaskListScreenState extends State<TaskListScreen> {
                                           ),
                                         ),
                                         child: Text(
-                                          task.priority.toUpperCase(),
+                                          Translations.getPriorityText(
+                                            task.priority,
+                                          ),
                                           style: const TextStyle(
                                             color: Colors.white,
                                             fontSize: 11,
@@ -521,9 +563,9 @@ class _TaskListScreenState extends State<TaskListScreen> {
                                           ),
                                         ),
                                         child: Text(
-                                          task.status
-                                              .replaceAll('_', ' ')
-                                              .toUpperCase(),
+                                          Translations.getStatusText(
+                                            task.status,
+                                          ),
                                           style: const TextStyle(
                                             color: Colors.white,
                                             fontSize: 11,
@@ -553,7 +595,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
                                       children: [
                                         Icon(Icons.edit),
                                         SizedBox(width: 8),
-                                        Text('Edit'),
+                                        Text('Editar'),
                                       ],
                                     ),
                                   ),
@@ -564,7 +606,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
                                         Icon(Icons.delete, color: Colors.red),
                                         SizedBox(width: 8),
                                         Text(
-                                          'Delete',
+                                          'Eliminar',
                                           style: TextStyle(color: Colors.red),
                                         ),
                                       ],
@@ -584,7 +626,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _navigateToTaskForm(),
-        tooltip: 'Add Task',
+        tooltip: 'Agregar Tarea',
         child: const Icon(Icons.add),
       ),
     );

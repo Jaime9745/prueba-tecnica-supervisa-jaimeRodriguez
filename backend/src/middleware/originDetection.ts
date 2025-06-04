@@ -19,7 +19,7 @@ export const detectOriginFramework = (
     // If custom header is present, use it
     req.originFramework = customOrigin;
   } else if (userAgent.includes("Dart/")) {
-    // If User-Agent contains "Dart/", it's likely from Flutter
+    // If User-Agent contains "Dart/"
     req.originFramework = "flutter";
   } else {
     // Default to astro for web requests

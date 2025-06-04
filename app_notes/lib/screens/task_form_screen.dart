@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/task.dart';
 import '../services/task_service.dart';
+import '../utils/translations.dart';
 
 class TaskFormScreen extends StatefulWidget {
   final Task? task; // If null, create new task; if not null, edit existing task
@@ -99,7 +100,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error saving task: $e'),
+            content: Text('Error guardando tarea: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -117,7 +118,9 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.task == null ? 'Add New Task' : 'Edit Task'),
+        title: Text(
+          widget.task == null ? 'Agregar Nueva Tarea' : 'Editar Tarea',
+        ),
         backgroundColor: const Color.fromARGB(255, 0, 85, 175),
         foregroundColor: Colors.white,
       ),
@@ -141,13 +144,13 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                     child: TextFormField(
                       controller: _titleController,
                       decoration: const InputDecoration(
-                        labelText: 'Title *',
+                        labelText: 'Título *',
                         border: OutlineInputBorder(),
                         prefixIcon: Icon(Icons.title),
                       ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'Please enter a title';
+                          return 'Por favor ingresa un título';
                         }
                         return null;
                       },
@@ -168,7 +171,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                     child: TextFormField(
                       controller: _descriptionController,
                       decoration: const InputDecoration(
-                        labelText: 'Description',
+                        labelText: 'Descripción',
                         border: OutlineInputBorder(),
                         prefixIcon: Icon(Icons.description),
                       ),
@@ -195,7 +198,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                           child: TextFormField(
                             controller: _dueDateController,
                             decoration: const InputDecoration(
-                              labelText: 'Due Date',
+                              labelText: 'Fecha Límite',
                               border: OutlineInputBorder(),
                               contentPadding: EdgeInsets.symmetric(
                                 horizontal: 10,
@@ -227,7 +230,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                             value: _selectedPriority,
                             isExpanded: true,
                             decoration: const InputDecoration(
-                              labelText: 'Priority',
+                              labelText: 'Prioridad',
                               border: OutlineInputBorder(),
                               contentPadding: EdgeInsets.symmetric(
                                 horizontal: 10,
@@ -239,7 +242,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                               return DropdownMenuItem(
                                 value: priority,
                                 child: Text(
-                                  priority.toUpperCase(),
+                                  Translations.getPriorityText(priority),
                                   style: TextStyle(fontSize: 12),
                                 ),
                               );
@@ -270,7 +273,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                       value: _selectedStatus,
                       isExpanded: true,
                       decoration: const InputDecoration(
-                        labelText: 'Status',
+                        labelText: 'Estado',
                         border: OutlineInputBorder(),
                         contentPadding: EdgeInsets.symmetric(
                           horizontal: 10,
@@ -282,7 +285,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                         return DropdownMenuItem(
                           value: status,
                           child: Text(
-                            status.replaceAll('_', ' ').toUpperCase(),
+                            Translations.getStatusText(status),
                             style: TextStyle(fontSize: 12),
                           ),
                         );
@@ -316,7 +319,9 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                       child: _isLoading
                           ? const CircularProgressIndicator(color: Colors.white)
                           : Text(
-                              widget.task == null ? 'Add Task' : 'Update Task',
+                              widget.task == null
+                                  ? 'Agregar Tarea'
+                                  : 'Actualizar Tarea',
                               style: const TextStyle(fontSize: 16),
                             ),
                     ),
