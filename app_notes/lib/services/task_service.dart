@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import '../models/task.dart';
 import '../config/app_config.dart';
@@ -33,11 +34,10 @@ class TaskService {
     try {
       final response = await http.get(Uri.parse(_apiUrl), headers: _headers);
 
-      final data = _handleResponse(response);
-      final List<dynamic> tasksJson = data['data'] ?? [];
+      final data = _handleResponse(response);      final List<dynamic> tasksJson = data['data'] ?? [];
       return tasksJson.map((json) => Task.fromJson(json)).toList();
     } catch (e) {
-      print('Error loading tasks: $e');
+      debugPrint('Error loading tasks: $e');
       throw Exception('Error al cargar tareas: $e');
     }
   }
@@ -57,12 +57,10 @@ class TaskService {
         Uri.parse(_apiUrl),
         headers: _headers,
         body: json.encode(taskData),
-      );
-
-      final data = _handleResponse(response);
+      );      final data = _handleResponse(response);
       return Task.fromJson(data['data']);
     } catch (e) {
-      print('Error adding task: $e');
+      debugPrint('Error adding task: $e');
       throw Exception('Error al agregar tarea: $e');
     }
   }
@@ -82,12 +80,10 @@ class TaskService {
         Uri.parse('$_apiUrl/${updatedTask.taskId}'),
         headers: _headers,
         body: json.encode(taskData),
-      );
-
-      final data = _handleResponse(response);
+      );      final data = _handleResponse(response);
       return Task.fromJson(data['data']);
     } catch (e) {
-      print('Error updating task: $e');
+      debugPrint('Error updating task: $e');
       throw Exception('Error al actualizar tarea: $e');
     }
   }
@@ -98,11 +94,9 @@ class TaskService {
       final response = await http.delete(
         Uri.parse('$_apiUrl/$taskId'),
         headers: _headers,
-      );
-
-      _handleResponse(response);
+      );      _handleResponse(response);
     } catch (e) {
-      print('Error deleting task: $e');
+      debugPrint('Error deleting task: $e');
       throw Exception('Error al eliminar tarea: $e');
     }
   }
@@ -113,12 +107,10 @@ class TaskService {
       final response = await http.get(
         Uri.parse('$_apiUrl/$taskId'),
         headers: _headers,
-      );
-
-      final data = _handleResponse(response);
+      );      final data = _handleResponse(response);
       return Task.fromJson(data['data']);
     } catch (e) {
-      print('Error getting task: $e');
+      debugPrint('Error getting task: $e');
       return null;
     }
   }
@@ -140,11 +132,10 @@ class TaskService {
     try {
       final response = await http.get(
         Uri.parse(AppConfig.healthApiUrl),
-        headers: _headers,
-      );
+        headers: _headers,      );
       return response.statusCode == 200;
     } catch (e) {
-      print('Backend connection failed: $e');
+      debugPrint('Backend connection failed: $e');
       return false;
     }
   }

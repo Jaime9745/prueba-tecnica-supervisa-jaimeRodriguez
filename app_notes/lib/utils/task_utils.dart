@@ -184,7 +184,7 @@ class TaskUtils {
       final exists = await file.exists();
       final size = exists ? await file.length() : 0;
 
-      return 'File: ${file.path}\nExists: $exists\nSize: ${size} bytes';
+      return 'File: ${file.path}\nExists: $exists\nSize: $size bytes';
     } catch (e) {
       return 'Error obteniendo información del archivo: $e';
     }

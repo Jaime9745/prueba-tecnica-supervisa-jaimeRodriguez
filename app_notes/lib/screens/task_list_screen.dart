@@ -202,12 +202,11 @@ class _TaskListScreenState extends State<TaskListScreen> {
         children: [
           // Filter Section
           Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
+            padding: const EdgeInsets.all(16),            decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.1),
+                  color: Colors.grey.withValues(alpha: 0.1),
                   spreadRadius: 1,
                   blurRadius: 3,
                   offset: const Offset(0, 2),
@@ -455,18 +454,19 @@ class _TaskListScreenState extends State<TaskListScreen> {
                                       child: const Text('Eliminar'),
                                     ),
                                   ],
-                                ),
-                              );
+                                ),                              );
                               if (confirmed == true) {
                                 await _taskService.deleteTask(task.taskId);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'Tarea eliminada exitosamente',
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Tarea eliminada exitosamente',
+                                      ),
+                                      backgroundColor: Colors.green,
                                     ),
-                                    backgroundColor: Colors.green,
-                                  ),
-                                );
+                                  );
+                                }
                                 return true;
                               }
                               return false;
