@@ -42,7 +42,6 @@ jobs:
           ls -la dist/
           # Verify TypeScript syntax
           npx tsc --noEmit
-
   # Job for web frontend (Astro + React)
   web-notes:
     runs-on: ubuntu-latest
@@ -59,6 +58,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
+          cache-dependency-path: "web-notes/package-lock.json"
 
       - name: Install frontend dependencies
         run: |
