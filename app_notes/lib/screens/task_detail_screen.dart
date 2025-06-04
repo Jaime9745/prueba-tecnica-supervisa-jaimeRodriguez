@@ -343,49 +343,6 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
               ),
             ),
             const SizedBox(height: 16),
-
-            // Additional Info
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Additional Information',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        const Icon(Icons.tag, size: 16, color: Colors.grey),
-                        const SizedBox(width: 8),
-                        Text('Task ID: ${_currentTask.taskId}'),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        const Icon(Icons.code, size: 16, color: Colors.grey),
-                        const SizedBox(width: 8),
-                        Text('Framework: ${_currentTask.originFramework}'),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        const Icon(Icons.email, size: 16, color: Colors.grey),
-                        const SizedBox(width: 8),
-                        Text('User: ${_currentTask.userEmail}'),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
           ],
         ),
       ),
