@@ -7,8 +7,7 @@ on:
   pull_request:
     branches: ["test"]
 
-jobs:
-  # Job for backend (Express.js + TypeScript)
+jobs: # Job for backend (Express.js + TypeScript)
   backend:
     runs-on: ubuntu-latest
     strategy:
@@ -24,6 +23,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
+          cache-dependency-path: "backend/package-lock.json"
 
       - name: Install backend dependencies
         run: |
