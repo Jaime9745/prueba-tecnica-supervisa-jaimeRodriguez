@@ -1,0 +1,109 @@
+name: CI Task-Manager
+description: "CI workflow for Task-Manager project with backend, web, and app components"
+
+on:
+  push:
+    branches: ["test", "main"]
+  pull_request:
+    branches: ["test", "main"]
+
+jobs: # Job for backend (Express.js + TypeScript)
+  backend:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+          cache-dependency-path: "backend/package-lock.json"
+
+      - name: Install backend dependencies
+        run: |
+          cd backend
+          npm install
+
+      - name: Compile TypeScript
+        run: |
+          cd backend
+          npm run build
+
+      - name: Verify backend compiles correctly
+        run: |
+          cd backend
+          # Verify compiled files exist
+          ls -la dist/
+          # Verify TypeScript syntax
+          npx tsc --noEmit
+  # Job for web frontend (Astro + React)
+  web-notes:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+          cache-dependency-path: "web-notes/package-lock.json"
+
+      - name: Install frontend dependencies
+        run: |
+          cd web-notes
+          npm install --legacy-peer-deps
+
+      - name: Build Astro project
+        run: |
+          cd web-notes
+          npm run build
+
+      - name: Verify build is successful
+        run: |
+          cd web-notes
+          # Verify dist directory exists
+          ls -la dist/
+
+  # Job for Flutter application
+  app-notes:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.32.0"
+          channel: "stable"
+
+      - name: Verify Flutter installation
+        run: flutter doctor -v
+
+      - name: Install Flutter dependencies
+        run: |
+          cd app_notes
+          flutter pub get
+
+      - name: Analyze Dart code
+        run: |
+          cd app_notes
+          flutter analyze
+
+      - name: Verify app compiles
+        run: |
+          cd app_notes
+          flutter build apk --debug --no-shrink
