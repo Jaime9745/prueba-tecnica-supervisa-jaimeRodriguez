@@ -1,11 +1,11 @@
-import type { Task, CreateTaskData } from "../types/task";
+import { Task, CreateTaskData, TaskFilters } from "../types/task";
 import { promises as fs } from "fs";
 import path from "path";
 
-const TASKS_FILE_PATH = path.join(process.cwd(), "data", "tasks.json");
-
 export class TaskStorage {
-  static async ensureDataDirectory() {
+  private static tasksFilePath = path.join(process.cwd(), "data", "tasks.json");
+
+  static async ensureDataDirectory(): Promise<void> {
     const dataDir = path.join(process.cwd(), "data");
     try {
       await fs.access(dataDir);
@@ -14,26 +14,56 @@ export class TaskStorage {
     }
   }
 
-  static async ensureTasksFile() {
+  static async ensureTasksFile(): Promise<void> {
     await this.ensureDataDirectory();
     try {
-      await fs.access(TASKS_FILE_PATH);
+      await fs.access(this.tasksFilePath);
     } catch {
-      await fs.writeFile(TASKS_FILE_PATH, JSON.stringify([], null, 2));
+      await fs.writeFile(this.tasksFilePath, JSON.stringify([], null, 2));
     }
   }
 
-  static async getAllTasks(): Promise<Task[]> {
+  static async getAllTasks(filters?: TaskFilters): Promise<Task[]> {
     await this.ensureTasksFile();
     try {
-      const data = await fs.readFile(TASKS_FILE_PATH, "utf-8");
-      return JSON.parse(data);
+      const data = await fs.readFile(this.tasksFilePath, "utf-8");
+      let tasks: Task[] = JSON.parse(data);
+
+      // Apply filters
+      if (filters) {
+        if (filters.status && filters.status.length > 0) {
+          tasks = tasks.filter((task) => filters.status!.includes(task.status));
+        }
+
+        if (filters.priority && filters.priority.length > 0) {
+          tasks = tasks.filter((task) =>
+            filters.priority!.includes(task.priority)
+          );
+        }
+
+        if (filters.search) {
+          const searchTerm = filters.search.toLowerCase();
+          tasks = tasks.filter(
+            (task) =>
+              task.title.toLowerCase().includes(searchTerm) ||
+              task.description?.toLowerCase().includes(searchTerm)
+          );
+        }
+      }
+
+      return tasks;
     } catch (error) {
       console.error("Error reading tasks:", error);
       return [];
     }
   }
-  static async saveTask(taskData: CreateTaskData): Promise<Task> {
+
+  static async getTaskById(taskId: string): Promise<Task | null> {
+    const tasks = await this.getAllTasks();
+    return tasks.find((task) => task.task_id === taskId) || null;
+  }
+
+  static async createTask(taskData: CreateTaskData): Promise<Task> {
     const tasks = await this.getAllTasks();
 
     // Check if title already exists
@@ -47,7 +77,7 @@ export class TaskStorage {
     const newTask: Task = {
       task_id: Date.now().toString(),
       ...taskData,
-      origin_framework: "astro",
+      origin_framework: "astro & express",
       user_email: "2220211014@estudiantesunibague.edu.co",
     };
 
@@ -55,12 +85,13 @@ export class TaskStorage {
     await this.saveTasks(tasks);
     return newTask;
   }
+
   static async updateTask(
-    task_id: string,
+    taskId: string,
     updateData: Partial<CreateTaskData>
   ): Promise<Task | null> {
     const tasks = await this.getAllTasks();
-    const taskIndex = tasks.findIndex((task) => task.task_id === task_id);
+    const taskIndex = tasks.findIndex((task) => task.task_id === taskId);
 
     if (taskIndex === -1) {
       return null;
@@ -71,7 +102,7 @@ export class TaskStorage {
       const existingTask = tasks.find(
         (task) =>
           task.title.toLowerCase() === updateData.title!.toLowerCase() &&
-          task.task_id !== task_id
+          task.task_id !== taskId
       );
       if (existingTask) {
         throw new Error("A task with this title already exists");
@@ -86,9 +117,10 @@ export class TaskStorage {
     await this.saveTasks(tasks);
     return tasks[taskIndex];
   }
-  static async deleteTask(task_id: string): Promise<boolean> {
+
+  static async deleteTask(taskId: string): Promise<boolean> {
     const tasks = await this.getAllTasks();
-    const filteredTasks = tasks.filter((task) => task.task_id !== task_id);
+    const filteredTasks = tasks.filter((task) => task.task_id !== taskId);
 
     if (filteredTasks.length === tasks.length) {
       return false; // Task not found
@@ -98,12 +130,7 @@ export class TaskStorage {
     return true;
   }
 
-  static async getTaskById(task_id: string): Promise<Task | null> {
-    const tasks = await this.getAllTasks();
-    return tasks.find((task) => task.task_id === task_id) || null;
-  }
-
   private static async saveTasks(tasks: Task[]): Promise<void> {
-    await fs.writeFile(TASKS_FILE_PATH, JSON.stringify(tasks, null, 2));
+    await fs.writeFile(this.tasksFilePath, JSON.stringify(tasks, null, 2));
   }
 }
