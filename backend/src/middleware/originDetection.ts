@@ -11,10 +11,10 @@ export const detectOriginFramework = (
 ) => {
   // Check User-Agent to detect if it's from Flutter/Dart
   const userAgent = req.get("User-Agent") || "";
-  
+
   // Check for custom header that mobile app can send
   const customOrigin = req.get("X-Origin-Framework");
-  
+
   if (customOrigin) {
     // If custom header is present, use it
     req.originFramework = customOrigin;

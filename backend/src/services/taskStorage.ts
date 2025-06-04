@@ -62,7 +62,10 @@ export class TaskStorage {
     const tasks = await this.getAllTasks();
     return tasks.find((task) => task.task_id === taskId) || null;
   }
-  static async createTask(taskData: CreateTaskData, originFramework: string = "astro"): Promise<Task> {
+  static async createTask(
+    taskData: CreateTaskData,
+    originFramework: string = "astro"
+  ): Promise<Task> {
     const tasks = await this.getAllTasks();
 
     // Check if title already exists

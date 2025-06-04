@@ -102,7 +102,11 @@ export class TaskController {
       const updateData = req.body;
       const originFramework = req.originFramework || "astro";
 
-      const updatedTask = await TaskStorage.updateTask(id, updateData, originFramework);
+      const updatedTask = await TaskStorage.updateTask(
+        id,
+        updateData,
+        originFramework
+      );
 
       if (!updatedTask) {
         res.status(404).json({
