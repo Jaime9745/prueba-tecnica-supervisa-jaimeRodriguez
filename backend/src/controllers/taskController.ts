@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { TaskStorage } from "../services/taskStorage";
 import { ApiResponse, Task, TaskFilters } from "../types/task";
+import { RequestWithOrigin } from "../middleware/originDetection";
 
 export class TaskController {
   static async getAllTasks(
@@ -67,14 +68,14 @@ export class TaskController {
       });
     }
   }
-
   static async createTask(
-    req: Request,
+    req: RequestWithOrigin,
     res: Response<ApiResponse<Task>>
   ): Promise<void> {
     try {
       const taskData = req.body;
-      const newTask = await TaskStorage.createTask(taskData);
+      const originFramework = req.originFramework || "astro";
+      const newTask = await TaskStorage.createTask(taskData, originFramework);
 
       res.status(201).json({
         success: true,
@@ -92,16 +93,16 @@ export class TaskController {
       });
     }
   }
-
   static async updateTask(
-    req: Request,
+    req: RequestWithOrigin,
     res: Response<ApiResponse<Task>>
   ): Promise<void> {
     try {
       const { id } = req.params;
       const updateData = req.body;
+      const originFramework = req.originFramework || "astro";
 
-      const updatedTask = await TaskStorage.updateTask(id, updateData);
+      const updatedTask = await TaskStorage.updateTask(id, updateData, originFramework);
 
       if (!updatedTask) {
         res.status(404).json({

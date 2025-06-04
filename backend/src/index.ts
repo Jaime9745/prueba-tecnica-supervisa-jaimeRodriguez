@@ -29,7 +29,10 @@ const limiter = rateLimit({
 app.use(helmet());
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN || "http://localhost:4321",
+    origin:
+      process.env.NODE_ENV === "production"
+        ? process.env.CORS_ORIGIN || "http://localhost:4321"
+        : true, // Allow all origins in development for mobile app testing
     credentials: true,
   })
 );

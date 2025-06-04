@@ -62,8 +62,7 @@ export class TaskStorage {
     const tasks = await this.getAllTasks();
     return tasks.find((task) => task.task_id === taskId) || null;
   }
-
-  static async createTask(taskData: CreateTaskData): Promise<Task> {
+  static async createTask(taskData: CreateTaskData, originFramework: string = "astro"): Promise<Task> {
     const tasks = await this.getAllTasks();
 
     // Check if title already exists
@@ -77,7 +76,7 @@ export class TaskStorage {
     const newTask: Task = {
       task_id: Date.now().toString(),
       ...taskData,
-      origin_framework: "astro",
+      origin_framework: originFramework,
       user_email: "2220211014@estudiantesunibague.edu.co",
     };
 
@@ -85,10 +84,10 @@ export class TaskStorage {
     await this.saveTasks(tasks);
     return newTask;
   }
-
   static async updateTask(
     taskId: string,
-    updateData: Partial<CreateTaskData>
+    updateData: Partial<CreateTaskData>,
+    originFramework?: string
   ): Promise<Task | null> {
     const tasks = await this.getAllTasks();
     const taskIndex = tasks.findIndex((task) => task.task_id === taskId);
@@ -112,6 +111,8 @@ export class TaskStorage {
     tasks[taskIndex] = {
       ...tasks[taskIndex],
       ...updateData,
+      // Update origin_framework if provided
+      ...(originFramework && { origin_framework: originFramework }),
     };
 
     await this.saveTasks(tasks);

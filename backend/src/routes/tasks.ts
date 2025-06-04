@@ -6,6 +6,7 @@ import {
   validateTaskId,
 } from "../middleware/validation";
 import { handleValidationErrors } from "../middleware/errorHandler";
+import { detectOriginFramework } from "../middleware/originDetection";
 
 const router = Router();
 
@@ -23,6 +24,7 @@ router.get(
 // POST /api/tasks - Create new task
 router.post(
   "/",
+  detectOriginFramework,
   validateCreateTask,
   handleValidationErrors,
   TaskController.createTask
@@ -31,6 +33,7 @@ router.post(
 // PUT /api/tasks/:id - Update task
 router.put(
   "/:id",
+  detectOriginFramework,
   validateUpdateTask,
   handleValidationErrors,
   TaskController.updateTask
