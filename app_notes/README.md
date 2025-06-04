@@ -1,21 +1,24 @@
-# Task Manager App
+# Gestor de Tareas - Aplicación Móvil
 
-A Flutter CRUD application for task management with local JSON file persistence.
+Una aplicación Flutter para gestión de tareas que se conecta a un backend Express.js.
 
-## Features
+## Características
 
-- **Create** new tasks with title, description, due date, priority, and status
-- **Read/View** all tasks in a list with filtering options
-- **Update** existing tasks
-- **Delete** tasks with confirmation dialog
-- **Local JSON persistence** - tasks are saved to a local JSON file
-- **Filter tasks** by status (all, pending, in progress, completed)
-- **Priority levels**: low, medium, high
-- **Status options**: pending, in_progress, completed
+- **Crear** nuevas tareas con título, descripción, fecha límite, prioridad y estado
+- **Ver** todas las tareas en una lista con opciones de filtrado
+- **Actualizar** tareas existentes
+- **Eliminar** tareas con diálogo de confirmación
+- **Persistencia con API** - las tareas se guardan a través de una API REST
+- **Filtrar tareas** por estado (todos, pendiente, en progreso, completada)
+- **Niveles de prioridad**: baja, media, alta
+- **Opciones de estado**: pendiente, en_progreso, completada
+- **Interfaz en Español** - Completamente traducida al español
+- **Botón de Actualización** - Actualización manual de la lista de tareas
+- **Detección de Origen** - Las tareas se marcan como creadas desde Flutter
 
-## Task Structure
+## Estructura de Tareas
 
-Each task is stored as JSON with the following structure:
+Cada tarea se almacena como JSON con la siguiente estructura:
 
 ```json
 {
@@ -30,70 +33,107 @@ Each task is stored as JSON with the following structure:
 }
 ```
 
-## User Input Fields
+## Campos de Entrada del Usuario
 
-Users only need to provide:
+Los usuarios solo necesitan proporcionar:
 
-- **Title** (required)
-- **Description** (required)
-- **Due Date** (required) - selected via date picker
-- **Priority** (dropdown): "low", "medium", "high"
-- **Status** (dropdown): "pending", "in_progress", "completed"
+- **Título** (requerido)
+- **Descripción** (opcional)
+- **Fecha Límite** (opcional) - seleccionada a través del selector de fecha
+- **Prioridad** (dropdown): "baja", "media", "alta"
+- **Estado** (dropdown): "pendiente", "en_progreso", "completada"
 
-The app automatically generates:
+La aplicación genera automáticamente:
 
-- `task_id`: timestamp-based unique identifier
-- `origin_framework`: set to "flutter"
-- `user_email`: default value (can be customized)
+- `task_id`: identificador único basado en timestamp
+- `origin_framework`: establecido como "flutter"
+- `user_email`: valor predeterminado (puede personalizarse)
 
-## Installation and Setup
+## Instalación y Configuración
 
-1. Make sure you have Flutter installed
-2. Clone or download this project
-3. Run `flutter pub get` to install dependencies
-4. Run `flutter run` to start the app
+1. Asegúrate de tener Flutter instalado
+2. Clona o descarga este proyecto
+3. Ejecuta `flutter pub get` para instalar dependencias
+4. Asegúrate de que el backend Express.js esté ejecutándose en localhost:3001
+5. Ejecuta `flutter run` para iniciar la aplicación
 
-## Dependencies
+## Dependencias
 
-- `path_provider`: For accessing device file system
-- `intl`: For date formatting
-- `cupertino_icons`: For iOS-style icons
+- `http`: Para comunicación con la API REST
+- `intl`: Para formateo de fechas
+- `cupertino_icons`: Para iconos estilo iOS
 
-## File Storage
+## Comunicación con la API
 
-Tasks are stored in a local JSON file (`tasks.json`) in the device's documents directory. The file is automatically created when you add your first task.
+La aplicación se conecta a un backend Express.js ejecutándose en `http://localhost:3001/api/tasks`.
 
-## Usage
+Los headers de petición incluyen:
 
-1. **Add a Task**: Tap the "+" floating action button
-2. **View Tasks**: All tasks are displayed on the main screen
-3. **Filter Tasks**: Use the filter menu (top-right) to show tasks by status
-4. **Edit a Task**: Tap on any task or use the menu (three dots)
-5. **Delete a Task**: Use the menu (three dots) on any task
-6. **Refresh**: Pull down to refresh the task list
+- `Content-Type: application/json`
+- `X-Origin-Framework: flutter` (para detección de origen)
 
-## UI Features
+## Uso
 
-- **Color-coded priorities**: Red (high), Orange (medium), Green (low)
-- **Status badges**: Visual indicators for task status
-- **Date picker**: Easy date selection for due dates
-- **Responsive design**: Works on various screen sizes
-- **Material Design**: Modern Flutter UI components
+1. **Agregar Tarea**: Toca el botón flotante "+"
+2. **Ver Tareas**: Todas las tareas se muestran en la pantalla principal
+3. **Filtrar Tareas**: Usa los dropdowns de filtro para mostrar tareas por estado y prioridad
+4. **Editar Tarea**: Toca cualquier tarea para ver detalles, luego usa el botón editar
+5. **Eliminar Tarea**: Usa el menú de tres puntos en cualquier tarea o desde la pantalla de detalles
+6. **Actualizar**: Usa el botón de actualización en la barra superior o desliza hacia abajo
 
-## Project Structure
+## Características de la UI
+
+- **Prioridades codificadas por color**: Rojo (alta), Naranja (media), Verde (baja)
+- **Badges de estado**: Indicadores visuales para el estado de la tarea
+- **Selector de fecha**: Selección fácil de fechas para fechas límite
+- **Diseño responsivo**: Funciona en varios tamaños de pantalla
+- **Material Design**: Componentes modernos de Flutter UI
+- **Interfaz en Español**: Toda la UI está traducida al español
+- **Gestos de deslizar**: Deslizar para editar (izquierda a derecha) o eliminar (derecha a izquierda)
+
+## Estructura del Proyecto
 
 ```
 lib/
-├── main.dart                 # App entry point
+├── main.dart                 # Punto de entrada de la aplicación
+├── config/
+│   └── app_config.dart      # Configuración del backend
 ├── models/
-│   └── task.dart            # Task model and constants
+│   └── task.dart            # Modelo de tarea y constantes
 ├── services/
-│   └── task_service.dart    # JSON file operations
-└── screens/
-    ├── task_list_screen.dart # Main task list view
-    └── task_form_screen.dart # Add/edit task form
+│   └── task_service.dart    # Operaciones HTTP con la API
+├── screens/
+│   ├── task_list_screen.dart    # Vista principal de lista de tareas
+│   ├── task_form_screen.dart    # Formulario agregar/editar tarea
+│   └── task_detail_screen.dart  # Vista de detalles de tarea
+└── utils/
+    ├── task_utils.dart          # Utilidades y validaciones
+    └── translations.dart        # Mapeos de traducción al español
 ```
 
-## Data Persistence
+## Conectividad API
 
-The app uses local file storage with JSON format for data persistence. All tasks are automatically saved to a local file and loaded when the app starts. No internet connection is required.
+La aplicación requiere conectividad de red para comunicarse con el backend Express.js. Sin conexión a la red, la aplicación mostrará mensajes de error apropiados.
+
+## Traducciones
+
+La aplicación está completamente traducida al español, incluyendo:
+
+- Títulos de pantallas y botones
+- Mensajes de validación y error
+- Etiquetas de formularios
+- Texto de estado y prioridad
+- Diálogos de confirmación
+
+## Configuración de Desarrollo
+
+Para desarrollo, asegúrate de que el backend esté ejecutándose en `localhost:3001`. Para producción, actualiza la URL en `lib/config/app_config.dart`.
+
+## Manejo de Errores
+
+La aplicación maneja varios escenarios de error:
+
+- Errores de conectividad de red
+- Respuestas de error del servidor
+- Errores de validación de datos
+- Timeouts de peticiones

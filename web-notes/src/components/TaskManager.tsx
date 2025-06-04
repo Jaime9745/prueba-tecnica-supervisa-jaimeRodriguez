@@ -16,6 +16,7 @@ import TaskCard from "./TaskCard";
 import TaskForm from "./TaskForm";
 import TaskFilters from "./TaskFilters";
 import TaskStats from "./TaskStats";
+import { apiCall, API_CONFIG } from "@/lib/api";
 import type { Task, Priority, Status } from "@/types/task";
 
 export default function TaskManager() {
@@ -35,17 +36,15 @@ export default function TaskManager() {
     isOpen: false,
     taskId: null,
     taskTitle: "",
-  }); // Fetch tasks
+  });
+
+  // Fetch tasks
   const fetchTasks = async () => {
     try {
       setLoading(true);
 
-      const response = await fetch("/api/tasks");
-      if (!response.ok) {
-        throw new Error("Failed to fetch tasks");
-      }
-      const data = await response.json();
-      setTasks(data);
+      const response = await apiCall(API_CONFIG.ENDPOINTS.TASKS);
+      setTasks(response.data || []);
       setLoading(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -76,22 +75,12 @@ export default function TaskManager() {
   useEffect(() => {
     fetchTasks();
   }, []);
-
   const handleCreateTask = async (taskData: any) => {
     try {
-      const response = await fetch("/api/tasks", {
+      const response = await apiCall(API_CONFIG.ENDPOINTS.TASKS, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify(taskData),
       });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || "Failed to create task");
-      }
 
       await fetchTasks(); // Refresh tasks
       setIsFormOpen(false);
@@ -99,24 +88,17 @@ export default function TaskManager() {
       alert(err instanceof Error ? err.message : "Failed to create task");
     }
   };
-
   const handleUpdateTask = async (taskData: any) => {
     if (!editingTask) return;
 
     try {
-      const response = await fetch(`/api/tasks/${editingTask.task_id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(taskData),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || "Failed to update task");
-      }
+      const response = await apiCall(
+        `${API_CONFIG.ENDPOINTS.TASKS}/${editingTask.task_id}`,
+        {
+          method: "PUT",
+          body: JSON.stringify(taskData),
+        }
+      );
 
       await fetchTasks(); // Refresh tasks
       setEditingTask(null);
@@ -139,14 +121,9 @@ export default function TaskManager() {
     if (!taskId) return;
 
     try {
-      const response = await fetch(`/api/tasks/${taskId}`, {
+      await apiCall(`${API_CONFIG.ENDPOINTS.TASKS}/${taskId}`, {
         method: "DELETE",
       });
-
-      if (!response.ok) {
-        const result = await response.json();
-        throw new Error(result.error || "Failed to delete task");
-      }
 
       await fetchTasks(); // Refresh tasks
 

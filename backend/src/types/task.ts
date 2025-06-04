@@ -20,11 +20,17 @@ export interface CreateTaskData {
   status: Status;
 }
 
-export interface UpdateTaskData extends Partial<CreateTaskData> {
-  id: string;
-}
+export interface UpdateTaskData extends Partial<CreateTaskData> {}
 
 export interface TaskFilters {
   status?: Status[];
   priority?: Priority[];
+  search?: string;
+}
+
+export interface ApiResponse<T = any> {
+  success: boolean;
+  data?: T;
+  error?: string;
+  message?: string;
 }

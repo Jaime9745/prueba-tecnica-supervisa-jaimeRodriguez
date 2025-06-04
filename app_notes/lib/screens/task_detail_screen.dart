@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/task.dart';
 import '../services/task_service.dart';
+import '../utils/translations.dart';
 import 'task_form_screen.dart';
 
 class TaskDetailScreen extends StatefulWidget {
@@ -52,17 +53,19 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Task'),
-        content: const Text('Are you sure you want to delete this task?'),
+        title: const Text('Eliminar Tarea'),
+        content: const Text(
+          '¿Estás seguro de que quieres eliminar esta tarea?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: const Text('Cancelar'),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Delete'),
+            child: const Text('Eliminar'),
           ),
         ],
       ),
@@ -80,7 +83,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Error deleting task: $e'),
+              content: Text('Error eliminando tarea: $e'),
               backgroundColor: Colors.red,
             ),
           );
@@ -115,19 +118,19 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Task Details'),
+        title: const Text('Detalles de la Tarea'),
         backgroundColor: const Color.fromARGB(255, 0, 85, 175),
         foregroundColor: Colors.white,
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
             onPressed: _editTask,
-            tooltip: 'Edit Task',
+            tooltip: 'Editar Tarea',
           ),
           IconButton(
             icon: const Icon(Icons.delete),
             onPressed: _deleteTask,
-            tooltip: 'Delete Task',
+            tooltip: 'Eliminar Tarea',
           ),
         ],
       ),
@@ -148,7 +151,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                         const Icon(Icons.title, color: Colors.blue),
                         const SizedBox(width: 8),
                         Text(
-                          'Title',
+                          'Título',
                           style: Theme.of(context).textTheme.titleMedium
                               ?.copyWith(
                                 fontWeight: FontWeight.bold,
@@ -182,7 +185,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                         const Icon(Icons.description, color: Colors.green),
                         const SizedBox(width: 8),
                         Text(
-                          'Description',
+                          'Descripción',
                           style: Theme.of(context).textTheme.titleMedium
                               ?.copyWith(
                                 fontWeight: FontWeight.bold,
@@ -221,7 +224,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                'Due Date',
+                                'Fecha Límite',
                                 style: Theme.of(context).textTheme.titleMedium
                                     ?.copyWith(
                                       fontWeight: FontWeight.bold,
@@ -232,9 +235,14 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            _currentTask.dueDate,
+                            _currentTask.dueDate ?? 'Sin fecha límite',
                             style: Theme.of(context).textTheme.bodyLarge
-                                ?.copyWith(fontWeight: FontWeight.w500),
+                                ?.copyWith(
+                                  fontWeight: FontWeight.w500,
+                                  color: _currentTask.dueDate == null
+                                      ? Colors.grey[500]
+                                      : null,
+                                ),
                           ),
                         ],
                       ),
@@ -258,7 +266,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                'Priority',
+                                'Prioridad',
                                 style: Theme.of(context).textTheme.titleMedium
                                     ?.copyWith(
                                       fontWeight: FontWeight.bold,
@@ -278,7 +286,9 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                               borderRadius: BorderRadius.circular(16),
                             ),
                             child: Text(
-                              _currentTask.priority.toUpperCase(),
+                              Translations.getPriorityText(
+                                _currentTask.priority,
+                              ),
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
@@ -310,7 +320,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          'Status',
+                          'Estado',
                           style: Theme.of(context).textTheme.titleMedium
                               ?.copyWith(
                                 fontWeight: FontWeight.bold,
@@ -330,7 +340,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Text(
-                        _currentTask.status.replaceAll('_', ' ').toUpperCase(),
+                        Translations.getStatusText(_currentTask.status),
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -343,49 +353,6 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
               ),
             ),
             const SizedBox(height: 16),
-
-            // Additional Info
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Additional Information',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        const Icon(Icons.tag, size: 16, color: Colors.grey),
-                        const SizedBox(width: 8),
-                        Text('Task ID: ${_currentTask.taskId}'),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        const Icon(Icons.code, size: 16, color: Colors.grey),
-                        const SizedBox(width: 8),
-                        Text('Framework: ${_currentTask.originFramework}'),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        const Icon(Icons.email, size: 16, color: Colors.grey),
-                        const SizedBox(width: 8),
-                        Text('User: ${_currentTask.userEmail}'),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
           ],
         ),
       ),
