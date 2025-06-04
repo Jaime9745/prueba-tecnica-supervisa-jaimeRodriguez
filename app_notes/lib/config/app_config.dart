@@ -1,10 +1,24 @@
+import 'dart:io';
+
 class AppConfig {
   // Backend configuration
-  static const String baseUrl = 'http://localhost:3001';
+  // Detect the correct URL based on platform
+  static String get baseUrl {
+    if (Platform.isAndroid) {
+      // Android emulator uses 10.0.2.2 to access host machine
+      return 'http://10.0.2.2:3001';
+    } else if (Platform.isIOS) {
+      // iOS simulator can use localhost
+      return 'http://localhost:3001';
+    } else {
+      // Web, desktop, or other platforms
+      return 'http://localhost:3001';
+    }
+  }
 
   // API endpoints
-  static const String tasksApiUrl = '$baseUrl/api/tasks';
-  static const String healthApiUrl = '$baseUrl/health';
+  static String get tasksApiUrl => '$baseUrl/api/tasks';
+  static String get healthApiUrl => '$baseUrl/health';
 
   // App configuration
   static const String appName = 'Gestor de Tareas';
