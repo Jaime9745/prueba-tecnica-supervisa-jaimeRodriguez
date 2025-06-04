@@ -4,7 +4,7 @@ class Task {
   final String taskId;
   final String title;
   final String description;
-  final String dueDate;
+  final String? dueDate; // Made optional
   final String priority;
   final String status;
   final String originFramework;
@@ -14,20 +14,19 @@ class Task {
     required this.taskId,
     required this.title,
     required this.description,
-    required this.dueDate,
+    this.dueDate, // Made optional
     required this.priority,
     required this.status,
     this.originFramework = 'flutter',
     this.userEmail = '2220211014@estudiantesunibague.edu.co',
   });
-
   // Create a task from JSON
   factory Task.fromJson(Map<String, dynamic> json) {
     return Task(
       taskId: json['task_id'],
       title: json['title'],
-      description: json['description'],
-      dueDate: json['due_date'],
+      description: json['description'] ?? '',
+      dueDate: json['due_date'], // Can be null
       priority: json['priority'],
       status: json['status'],
       originFramework: json['origin_framework'] ?? 'flutter',

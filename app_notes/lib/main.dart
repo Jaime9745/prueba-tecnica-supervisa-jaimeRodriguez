@@ -10,9 +10,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const primaryBlue = Color.fromARGB(255, 0, 85, 175);
-
     return MaterialApp(
-      title: 'Task Manager',
+      title: 'Gestor de Tareas',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: primaryBlue,
