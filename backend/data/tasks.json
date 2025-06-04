@@ -46,17 +46,7 @@
     "priority": "high",
     "status": "pending",
     "due_date": "10/06/2025",
-    "origin_framework": "express",
-    "user_email": "2220211014@estudiantesunibague.edu.co"
-  },
-  {
-    "task_id": "1749044520387",
-    "title": "Supervisa",
-    "description": "",
-    "priority": "low",
-    "status": "in_progress",
-    "due_date": "05/06/2025",
-    "origin_framework": "astro & express",
+    "origin_framework": "astro",
     "user_email": "2220211014@estudiantesunibague.edu.co"
   }
 ]

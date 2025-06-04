@@ -5,7 +5,7 @@ export interface Task {
   task_id: string;
   title: string;
   description?: string;
-  due_date: string; // DD/MM/YYYY format
+  due_date?: string; // DD/MM/YYYY format
   priority: Priority;
   status: Status;
   origin_framework: string;
@@ -15,7 +15,7 @@ export interface Task {
 export interface CreateTaskData {
   title: string;
   description?: string;
-  due_date: string;
+  due_date?: string;
   priority: Priority;
   status: Status;
 }

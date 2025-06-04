@@ -77,7 +77,7 @@ export class TaskStorage {
     const newTask: Task = {
       task_id: Date.now().toString(),
       ...taskData,
-      origin_framework: "astro & express",
+      origin_framework: "astro",
       user_email: "2220211014@estudiantesunibague.edu.co",
     };
 

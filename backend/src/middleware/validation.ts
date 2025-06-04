@@ -7,15 +7,12 @@ export const validateCreateTask = [
     .withMessage("Title is required")
     .isLength({ max: 150 })
     .withMessage("Title must be 150 characters or less"),
-
   body("description")
     .optional()
     .isLength({ max: 1000 })
     .withMessage("Description must be 1000 characters or less"),
-
   body("due_date")
-    .notEmpty()
-    .withMessage("Due date is required")
+    .optional({ values: "falsy" })
     .matches(/^\d{2}\/\d{2}\/\d{4}$/)
     .withMessage("Due date must be in DD/MM/YYYY format"),
 
@@ -43,9 +40,8 @@ export const validateUpdateTask = [
     .optional()
     .isLength({ max: 1000 })
     .withMessage("Description must be 1000 characters or less"),
-
   body("due_date")
-    .optional()
+    .optional({ values: "falsy" })
     .matches(/^\d{2}\/\d{2}\/\d{4}$/)
     .withMessage("Due date must be in DD/MM/YYYY format"),
 
