@@ -81,7 +81,8 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
             : _dueDateController.text,
         priority: _selectedPriority,
         status: _selectedStatus,
-      );      if (widget.task == null) {
+      );
+      if (widget.task == null) {
         // Create new task
         final createdTask = await _taskService.addTask(task);
         debugPrint('Task created successfully: ${createdTask.taskId}');

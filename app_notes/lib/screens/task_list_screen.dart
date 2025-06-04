@@ -202,7 +202,8 @@ class _TaskListScreenState extends State<TaskListScreen> {
         children: [
           // Filter Section
           Container(
-            padding: const EdgeInsets.all(16),            decoration: BoxDecoration(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
@@ -454,7 +455,8 @@ class _TaskListScreenState extends State<TaskListScreen> {
                                       child: const Text('Eliminar'),
                                     ),
                                   ],
-                                ),                              );
+                                ),
+                              );
                               if (confirmed == true) {
                                 await _taskService.deleteTask(task.taskId);
                                 if (context.mounted) {
