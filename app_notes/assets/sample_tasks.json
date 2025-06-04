@@ -1,0 +1,22 @@
+[
+  {
+    "task_id": "1748978242422",
+    "title": "Revisar presupuesto mensual",
+    "description": "Revisar todos los gastos del mes de mayo, comparar con el presupuesto inicial y preparar informe para la reunión del viernes",
+    "due_date": "14/06/2025",
+    "priority": "high",
+    "status": "pending",
+    "origin_framework": "flutter",
+    "user_email": "user@example.com"
+  },
+  {
+    "task_id": "1748978243000",
+    "title": "Completar documentación del proyecto",
+    "description": "Finalizar la documentación técnica del proyecto de gestión de tareas",
+    "due_date": "20/06/2025",
+    "priority": "medium",
+    "status": "in_progress",
+    "origin_framework": "flutter",
+    "user_email": "user@example.com"
+  }
+]

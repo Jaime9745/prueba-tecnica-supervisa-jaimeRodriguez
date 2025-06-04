@@ -1,0 +1,245 @@
+import 'package:flutter/material.dart';
+import '../models/task.dart';
+import '../services/task_service.dart';
+
+class TaskFormScreen extends StatefulWidget {
+  final Task? task; // If null, create new task; if not null, edit existing task
+
+  const TaskFormScreen({super.key, this.task});
+
+  @override
+  State<TaskFormScreen> createState() => _TaskFormScreenState();
+}
+
+class _TaskFormScreenState extends State<TaskFormScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _titleController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  final _dueDateController = TextEditingController();
+
+  String _selectedPriority = TaskPriority.medium;
+  String _selectedStatus = TaskStatus.pending;
+  DateTime? _selectedDate;
+  final TaskService _taskService = TaskService();
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.task != null) {
+      // Pre-fill form with existing task data
+      _titleController.text = widget.task!.title;
+      _descriptionController.text = widget.task!.description;
+      _dueDateController.text = widget.task!.dueDate;
+      _selectedPriority = widget.task!.priority;
+      _selectedStatus = widget.task!.status;
+      _selectedDate = Task.parseDate(widget.task!.dueDate);
+    }
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+    _dueDateController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _selectDate() async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+    );
+
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+        _dueDateController.text = Task.formatDate(picked);
+      });
+    }
+  }
+
+  Future<void> _saveTask() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final task = Task(
+        taskId: widget.task?.taskId ?? Task.generateTaskId(),
+        title: _titleController.text.trim(),
+        description: _descriptionController.text.trim(),
+        dueDate: _dueDateController.text,
+        priority: _selectedPriority,
+        status: _selectedStatus,
+      );
+
+      if (widget.task == null) {
+        // Create new task
+        await _taskService.addTask(task);
+      } else {
+        // Update existing task
+        await _taskService.updateTask(task);
+      }
+
+      if (mounted) {
+        Navigator.of(context).pop(true); // Return true to indicate success
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error saving task: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.task == null ? 'Add New Task' : 'Edit Task'),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: [
+              // Title field
+              TextFormField(
+                controller: _titleController,
+                decoration: const InputDecoration(
+                  labelText: 'Title *',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.title),
+                ),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Please enter a title';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+
+              // Description field
+              TextFormField(
+                controller: _descriptionController,
+                decoration: const InputDecoration(
+                  labelText: 'Description *',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.description),
+                ),
+                maxLines: 3,
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Please enter a description';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+
+              // Due date field
+              TextFormField(
+                controller: _dueDateController,
+                decoration: const InputDecoration(
+                  labelText: 'Due Date *',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.calendar_today),
+                  suffixIcon: Icon(Icons.arrow_drop_down),
+                ),
+                readOnly: true,
+                onTap: _selectDate,
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Please select a due date';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+
+              // Priority dropdown
+              DropdownButtonFormField<String>(
+                value: _selectedPriority,
+                decoration: const InputDecoration(
+                  labelText: 'Priority',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.priority_high),
+                ),
+                items: TaskPriority.values.map((priority) {
+                  return DropdownMenuItem(
+                    value: priority,
+                    child: Text(priority.toUpperCase()),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedPriority = value!;
+                  });
+                },
+              ),
+              const SizedBox(height: 16),
+
+              // Status dropdown
+              DropdownButtonFormField<String>(
+                value: _selectedStatus,
+                decoration: const InputDecoration(
+                  labelText: 'Status',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.track_changes),
+                ),
+                items: TaskStatus.values.map((status) {
+                  return DropdownMenuItem(
+                    value: status,
+                    child: Text(status.replaceAll('_', ' ').toUpperCase()),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedStatus = value!;
+                  });
+                },
+              ),
+              const SizedBox(height: 32),
+
+              // Save button
+              ElevatedButton(
+                onPressed: _isLoading ? null : _saveTask,
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  foregroundColor: Colors.white,
+                ),
+                child: _isLoading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : Text(
+                        widget.task == null ? 'Add Task' : 'Update Task',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
