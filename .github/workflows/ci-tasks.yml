@@ -1,0 +1,156 @@
+name: CI Task-Manager
+description: "CI workflow for Task-Manager project with backend, web, and app components"
+
+on:
+  push:
+    branches: ["test"]
+  pull_request:
+    branches: ["test"]
+
+jobs:
+  # Job for backend (Express.js + TypeScript)
+  backend:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+
+      - name: Install backend dependencies
+        run: |
+          cd backend
+          npm install
+
+      - name: Compile TypeScript
+        run: |
+          cd backend
+          npm run build
+
+      - name: Verify backend compiles correctly
+        run: |
+          cd backend
+          # Verify compiled files exist
+          ls -la dist/
+          # Verify TypeScript syntax
+          npx tsc --noEmit
+
+  # Job for web frontend (Astro + React)
+  web-notes:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+
+      - name: Install frontend dependencies
+        run: |
+          cd web-notes
+          npm install --legacy-peer-deps
+
+      - name: Build Astro project
+        run: |
+          cd web-notes
+          npm run build
+
+      - name: Verify build is successful
+        run: |
+          cd web-notes
+          # Verify dist directory exists
+          ls -la dist/
+
+  # Job for Flutter application
+  app-notes:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.0"
+          channel: "stable"
+
+      - name: Verify Flutter installation
+        run: flutter doctor -v
+
+      - name: Install Flutter dependencies
+        run: |
+          cd app_notes
+          flutter pub get
+
+      - name: Analyze Dart code
+        run: |
+          cd app_notes
+          flutter analyze
+
+      - name: Verify app compiles
+        run: |
+          cd app_notes
+          flutter build apk --debug --no-shrink
+
+  # Job for automatic merge to main (without .github folder)
+  auto-merge-to-main:
+    runs-on: ubuntu-latest
+    needs: [backend, web-notes, app-notes]
+    if: github.ref == 'refs/heads/test' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout test branch
+        uses: actions/checkout@v4
+        with:
+          ref: test
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+      - name: Create clean branch for main
+        run: |
+          # Create new temporary branch from test
+          git checkout -b temp-main-merge
+
+          # Remove .github folder
+          rm -rf .github
+
+          # Commit changes
+          git add .
+          git commit -m "Remove .github folder for main branch" || echo "No changes to commit"
+
+      - name: Merge to main
+        run: |
+          # Switch to main or create if it doesn't exist
+          git checkout main 2>/dev/null || git checkout -b main
+
+          # Merge temporary branch
+          git merge temp-main-merge --no-ff -m "Auto-merge from test branch (without .github folder)"
+
+          # Push to main
+          git push origin main
+
+      - name: Cleanup
+        run: |
+          # Delete temporary branch
+          git branch -D temp-main-merge
