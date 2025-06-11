@@ -42,9 +42,8 @@ export default function TaskManager() {
   const fetchTasks = async () => {
     try {
       setLoading(true);
-
       const response = await apiCall(API_CONFIG.ENDPOINTS.TASKS);
-      setTasks(response.data || []);
+      setTasks(response || []);
       setLoading(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -52,29 +51,11 @@ export default function TaskManager() {
     }
   };
 
-  // Filter tasks
-  useEffect(() => {
-    let filtered = [...tasks];
-
-    if (selectedStatuses.length > 0) {
-      filtered = filtered.filter((task) =>
-        selectedStatuses.includes(task.status)
-      );
-    }
-
-    if (selectedPriorities.length > 0) {
-      filtered = filtered.filter((task) =>
-        selectedPriorities.includes(task.priority)
-      );
-    }
-
-    setFilteredTasks(filtered);
-  }, [tasks, selectedStatuses, selectedPriorities]);
-
   // Initial fetch
   useEffect(() => {
     fetchTasks();
   }, []);
+
   const handleCreateTask = async (taskData: any) => {
     try {
       const response = await apiCall(API_CONFIG.ENDPOINTS.TASKS, {
@@ -88,32 +69,14 @@ export default function TaskManager() {
       alert(err instanceof Error ? err.message : "Failed to create task");
     }
   };
-  const handleUpdateTask = async (taskData: any) => {
-    if (!editingTask) return;
-
-    try {
-      const response = await apiCall(
-        `${API_CONFIG.ENDPOINTS.TASKS}/${editingTask.task_id}`,
-        {
-          method: "PUT",
-          body: JSON.stringify(taskData),
-        }
-      );
-
-      await fetchTasks(); // Refresh tasks
-      setEditingTask(null);
-    } catch (err) {
-      alert(err instanceof Error ? err.message : "Failed to update task");
-    }
-  };
   const handleDeleteTask = async (taskId: string) => {
-    const task = tasks.find((t) => t.task_id === taskId);
+    const task = tasks.find((t) => t.id === taskId);
     if (!task) return;
 
     setDeleteDialog({
       isOpen: true,
       taskId: taskId,
-      taskTitle: task.title,
+      taskTitle: task.name,
     });
   };
   const confirmDeleteTask = async () => {
@@ -194,7 +157,7 @@ export default function TaskManager() {
 
         {/* Tasks Grid/List */}
         <div className="lg:col-span-3 order-2 lg:order-2">
-          {filteredTasks.length === 0 ? (
+          {tasks.length === 0 ? (
             <div className="text-center py-12">
               <div className="text-gray-500 text-lg mb-2">
                 {tasks.length === 0
@@ -209,9 +172,9 @@ export default function TaskManager() {
             </div>
           ) : (
             <div className="space-y-4">
-              {filteredTasks.map((task) => (
+              {tasks.map((task) => (
                 <TaskCard
-                  key={task.task_id}
+                  key={task.id}
                   task={task}
                   onEdit={handleEditTask}
                   onDelete={handleDeleteTask}
@@ -233,13 +196,6 @@ export default function TaskManager() {
         onSubmit={handleCreateTask}
       />{" "}
       {/* Edit Task Form Modal */}
-      <TaskForm
-        isOpen={!!editingTask}
-        onClose={() => setEditingTask(null)}
-        onSubmit={handleUpdateTask}
-        task={editingTask}
-        isEdit={true}
-      />
       {/* Delete Confirmation Dialog */}
       <AlertDialog
         open={deleteDialog.isOpen}
