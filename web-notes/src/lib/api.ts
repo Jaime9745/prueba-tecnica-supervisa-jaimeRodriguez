@@ -1,9 +1,10 @@
 // API Configuration
 export const API_CONFIG = {
-  BASE_URL: "http://localhost:3001",
+  //BASE_URL: "http://localhost:3001",
+  BASE_URL: "https://api.restful-api.dev",
   ENDPOINTS: {
-    TASKS: "/api/tasks",
-    HEALTH: "/health",
+    TASKS: "/objects",
+    //HEALTH: "/health",
   },
 };
 
@@ -31,6 +32,6 @@ export const apiCall = async (endpoint: string, options?: RequestInit) => {
   if (!response.ok) {
     throw new Error(data.error || `HTTP error! status: ${response.status}`);
   }
-
+  console.log("API Response:", data);
   return data;
 };
